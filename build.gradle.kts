@@ -35,6 +35,16 @@ publishing {
         }
     }
     repositories.maven(repositories.mavenLocal())
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/VerdoxLabs/VSerializer")
+            credentials {
+                username = System.getenv("USERNAME")
+                password = System.getenv("TOKEN")
+            }
+        }
+    }
 }
 
 tasks{
