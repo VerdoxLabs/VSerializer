@@ -1,2 +1,2 @@
-rootProject.name = "VSerializer"
+rootProject.name = "vserializer"
 
