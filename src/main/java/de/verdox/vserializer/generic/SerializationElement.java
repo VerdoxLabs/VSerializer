@@ -1,8 +1,5 @@
 package de.verdox.vserializer.generic;
 
-import org.jetbrains.annotations.ApiStatus;
-
-@ApiStatus.Experimental
 public interface SerializationElement {
     boolean getAsBoolean();
 
@@ -28,7 +25,33 @@ public interface SerializationElement {
         return this;
     }
 
-    SerializationContainer getAsContainer();
+    default SerializationContainer getAsContainer() {
+        throw new UnsupportedOperationException();
+    }
 
-    SerializationArray getAsArray();
+    default SerializationArray getAsArray() {
+        throw new UnsupportedOperationException();
+    }
+
+    default SerializationPrimitive getAsPrimitive() {
+        throw new UnsupportedOperationException();
+    }
+
+    default boolean isPrimitive(){
+        return false;
+    }
+
+    default boolean isContainer(){
+        return false;
+    }
+
+    default boolean isArray(){
+        return false;
+    }
+
+    default boolean isNull(){
+        return false;
+    }
+
+    SerializationContext getContext();
 }

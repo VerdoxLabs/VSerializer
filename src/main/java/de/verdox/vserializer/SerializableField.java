@@ -1,9 +1,8 @@
 package de.verdox.vserializer;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import de.verdox.vserializer.json.JsonSerializer;
-import de.verdox.vserializer.util.gson.JsonObjectBuilder;
+import de.verdox.vserializer.generic.SerializationContainer;
+import de.verdox.vserializer.generic.SerializationElement;
+import de.verdox.vserializer.generic.Serializer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
@@ -17,11 +16,11 @@ import java.util.function.Function;
  */
 public class SerializableField<T, R> {
     private final String fieldName;
-    private final JsonSerializer<R> serializer;
+    private final Serializer<R> serializer;
     private final Function<T, R> getter;
     private final BiConsumer<T, Object> setter;
 
-    public SerializableField(@Nullable String fieldName, JsonSerializer<R> serializer, Function<T, R> getter, @Nullable BiConsumer<T, R> setter) {
+    public SerializableField(@Nullable String fieldName, Serializer<R> serializer, Function<T, R> getter, @Nullable BiConsumer<T, R> setter) {
         this.fieldName = fieldName;
         this.serializer = serializer;
         this.getter = getter;
@@ -31,36 +30,35 @@ public class SerializableField<T, R> {
         };
     }
 
-    public SerializableField(@Nullable String fieldName, JsonSerializer<R> serializer, Function<T, R> getter){
+    public SerializableField(@Nullable String fieldName, Serializer<R> serializer, Function<T, R> getter){
         this(fieldName, serializer, getter, null);
     }
 
-    public SerializableField(JsonSerializer<R> serializer, Function<T, R> getter){
+    public SerializableField(Serializer<R> serializer, Function<T, R> getter){
         this(null, serializer, getter, null);
     }
 
-    public JsonObjectBuilder write(JsonObjectBuilder jsonObjectBuilder, T wrapped) {
+    public void write(SerializationContainer serializationContainer, T wrapped) {
         try {
             R fieldValue = getter.apply(wrapped);
 
-            JsonElement serialized;
+            SerializationElement serialized;
             if (fieldValue == null && !serializer.acceptsNullValues())
-                serialized = JsonSerializer.Null.create(serializer.getType()).toJson(null);
+                serialized = Serializer.Null.create(serializer.getType()).serialize(serializationContainer.getContext(), null);
             else
-                serialized = serializer.toJson(fieldValue);
+                serialized = serializer.serialize(serializationContainer.getContext(), fieldValue);
 
-            jsonObjectBuilder.add(fieldName == null ? serializer.id() : fieldName, serialized).build();
-            return jsonObjectBuilder;
+            serializationContainer.set(fieldName == null ? serializer.id() : fieldName, serialized);
         } catch (Throwable e) {
             throw new RuntimeException("An error occurred in the SerializableField " + fieldName + " while writing with the serializer " + serializer.id() + " of type " + serializer.getType(), e);
         }
     }
 
-    public R read(JsonObject jsonObject) {
-        JsonElement serialized = jsonObject.get(fieldName == null ? serializer.id() : fieldName);
-        if (JsonSerializer.Null.create(serializer.getType()).isNull(serialized))
+    public R read(SerializationContainer serializationContainer) {
+        SerializationElement serialized = serializationContainer.get(fieldName == null ? serializer.id() : fieldName);
+        if (Serializer.Null.isNull(serialized))
             return null;
-        return serializer.fromJson(serialized);
+        return serializer.deserialize(serialized);
     }
 
     public BiConsumer<T, Object> setter() {

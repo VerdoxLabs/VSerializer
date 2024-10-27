@@ -19,8 +19,12 @@ java {
 dependencies {
     compileOnly("com.google.code.gson:gson:2.11.0")
     compileOnly("org.jetbrains:annotations:26.0.1")
+
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.jetbrains:annotations:26.0.1")
+    testImplementation("com.google.code.gson:gson:2.11.0")
+    testImplementation("org.ow2.asm:asm-tree:9.7")
 }
 
 publishing {

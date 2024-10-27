@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 
 public class JsonSerializationArray extends JsonSerializationElement implements SerializationArray {
-    public JsonSerializationArray(JsonArray jsonElement) {
-        super(jsonElement);
+    public JsonSerializationArray(JsonSerializerContext serializerContext, JsonArray jsonElement) {
+        super(serializerContext, jsonElement);
     }
 
     @Override
@@ -19,8 +19,8 @@ public class JsonSerializationArray extends JsonSerializationElement implements 
     }
 
     @Override
-    public SerializationElement get(int index) {
-        return new JsonSerializationElement(jsonElement.getAsJsonArray().get(index));
+    public JsonSerializationElement get(int index) {
+        return new JsonSerializationElement(getContext(), jsonElement.getAsJsonArray().get(index));
     }
 
     @Override
@@ -36,7 +36,7 @@ public class JsonSerializationArray extends JsonSerializationElement implements 
 
     @Override
     public SerializationElement remove(int index) {
-        return new JsonSerializationElement(jsonElement.getAsJsonArray().remove(index));
+        return new JsonSerializationElement(getContext(), jsonElement.getAsJsonArray().remove(index));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class JsonSerializationArray extends JsonSerializationElement implements 
 
             @Override
             public SerializationElement next() {
-                return new JsonSerializationElement(iterator.next());
+                return new JsonSerializationElement(getContext(), iterator.next());
             }
 
             @Override
@@ -66,5 +66,10 @@ public class JsonSerializationArray extends JsonSerializationElement implements 
                 iterator.remove();
             }
         };
+    }
+
+    @Override
+    public JsonArray getJsonElement() {
+        return super.getJsonElement().getAsJsonArray();
     }
 }
