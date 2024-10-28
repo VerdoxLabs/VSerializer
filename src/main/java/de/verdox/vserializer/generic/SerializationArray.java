@@ -11,7 +11,11 @@ public interface SerializationArray extends SerializationElement, Iterable<Seria
 
     SerializationElement remove(int index);
 
-    void addAll(SerializationArray serializationArray);
+    default void addAll(SerializationArray serializationArray){
+        for (SerializationElement element : serializationArray) {
+            add(element);
+        }
+    }
 
     @Override
     default SerializationArray getAsArray(){
