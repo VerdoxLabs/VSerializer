@@ -1,6 +1,7 @@
 package test;
 
 import de.verdox.vserializer.SerializableField;
+import de.verdox.vserializer.generic.SerializationArray;
 import de.verdox.vserializer.generic.SerializationContainer;
 import de.verdox.vserializer.generic.SerializationElement;
 import de.verdox.vserializer.generic.Serializer;
@@ -18,7 +19,7 @@ public abstract class SerializerContextTests extends ContextBasedTest {
     }
 
     @Test
-    public void testSerializerConversion() {
+    public void testSerializerConversionSimple() {
         Person person = new Person("Hans", 23, Gender.MALE);
         SerializationElement element = Person.SERIALIZER.serialize(context(), person);
 
@@ -111,6 +112,86 @@ public abstract class SerializerContextTests extends ContextBasedTest {
         Assertions.assertFalse(child.isPrimitive());
         Assertions.assertFalse(child.isArray());
         Assertions.assertTrue(child.isNull());
+    }
+
+    @Test
+    public void testSerializationElementTestChildFromArrayIsContainer(){
+        SerializationArray array = context().createArray(context().createContainer());
+        SerializationElement child = array.get(0);
+
+        Assertions.assertTrue(child.isContainer());
+        Assertions.assertFalse(child.isPrimitive());
+        Assertions.assertFalse(child.isArray());
+        Assertions.assertFalse(child.isNull());
+    }
+
+    @Test
+    public void testSerializationElementTestChildFromArrayIsArray(){
+        SerializationArray array = context().createArray(context().createArray());
+        SerializationElement child = array.get(0);
+
+        Assertions.assertFalse(child.isContainer());
+        Assertions.assertFalse(child.isPrimitive());
+        Assertions.assertTrue(child.isArray());
+        Assertions.assertFalse(child.isNull());
+    }
+
+    @Test
+    public void testSerializationElementTestChildFromArrayIsPrimitive(){
+        SerializationArray array = context().createArray(context().create(1));
+        SerializationElement child = array.get(0);
+
+        Assertions.assertFalse(child.isContainer());
+        Assertions.assertTrue(child.isPrimitive());
+        Assertions.assertFalse(child.isArray());
+        Assertions.assertFalse(child.isNull());
+    }
+
+    @Test
+    public void testSerializationElementTestChildFromArrayIsNull(){
+        SerializationArray array = context().createArray(context().createNull());
+        SerializationElement child = array.get(0);
+
+        Assertions.assertFalse(child.isContainer());
+        Assertions.assertFalse(child.isPrimitive());
+        Assertions.assertFalse(child.isArray());
+        Assertions.assertTrue(child.isNull());
+    }
+
+    @Test
+    public void testSerializationSameTypeInContainerPrimitive(){
+        SerializationContainer container = context().createContainer();
+        SerializationElement childBeforeInsertion = context().create(1);
+
+        container.set("child", childBeforeInsertion);
+        Assertions.assertEquals(childBeforeInsertion, container.get("child"));
+    }
+
+    @Test
+    public void testSerializationSameTypeInContainerNull(){
+        SerializationContainer container = context().createContainer();
+        SerializationElement childBeforeInsertion = context().createNull();
+
+        container.set("child", childBeforeInsertion);
+        Assertions.assertEquals(childBeforeInsertion, container.get("child"));
+    }
+
+    @Test
+    public void testSerializationSameTypeInContainerContainer(){
+        SerializationContainer container = context().createContainer();
+        SerializationElement childBeforeInsertion = context().createContainer();
+
+        container.set("child", childBeforeInsertion);
+        Assertions.assertEquals(childBeforeInsertion, container.get("child"));
+    }
+
+    @Test
+    public void testSerializationSameTypeInContainerArray(){
+        SerializationContainer container = context().createContainer();
+        SerializationElement childBeforeInsertion = context().createArray();
+
+        container.set("child", childBeforeInsertion);
+        Assertions.assertEquals(childBeforeInsertion, container.get("child"));
     }
 
     @Test
