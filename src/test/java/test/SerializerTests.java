@@ -68,15 +68,32 @@ public abstract class SerializerTest extends ContextBasedTest {
     }
 
     @Test
-    void testSelectionSerializerWithEmptyAtEnd(){
-        final Serializer<Selectable> SELECTION_SERIALIZER =
-                Serializer.Selection.create("selection", Selectable.class)
-                        .variant("var1", Selectable.SERIALIZER, new Selectable("var1", true))
-                        .variant("var2", Selectable.SERIALIZER, new Selectable("var2", false))
-                        .empty("empty")
-                ;
+    public void testComplexToPrimitiveSerializer(){
 
-        SerializationElement element = SELECTION_SERIALIZER.serialize(context(), null);
-        Assertions.assertNull(SELECTION_SERIALIZER.deserialize(element));
-    }*/
+        Serializer<Person> PERSON_BY_NAME_SERIALIZER = SerializerBuilder.createObjectToPrimitiveSerializer("person_by_name", Person.class, Serializer.Primitive.STRING, Person::getName, s -> new Person(s, 0, Gender.MALE));
+
+        SerializationElement element = PERSON_BY_NAME_SERIALIZER.serialize(context(), new Person("Peter", 23, Gender.MALE));
+        Assertions.assertEquals(element, context().create("Peter"));
+
+        Person deserializedPerson = PERSON_BY_NAME_SERIALIZER.deserialize(element);
+        Assertions.assertEquals("Peter", deserializedPerson.getName());
+        Assertions.assertEquals(0, deserializedPerson.getAge());
+        Assertions.assertEquals(Gender.MALE, deserializedPerson.getGender());
+        Assertions.assertNull(deserializedPerson.getJob());
+    }
+
+    @Test
+    void testSelectionSerializerWithEmpty(){
+        Car car = new Car();
+        SerializationElement serializedCar = GroundVehicle.VEHICLE_SELECTION_SERIALIZER.serialize(context(), car);
+
+        Motorbike motorbike = new Motorbike();
+        SerializationElement serializedMotorbike = GroundVehicle.VEHICLE_SELECTION_SERIALIZER.serialize(context(), motorbike);
+
+        Assertions.assertNotEquals(serializedCar, serializedMotorbike);
+
+        SerializationElement serializedNull = GroundVehicle.VEHICLE_SELECTION_SERIALIZER.serialize(context(), null);
+        // This test passes since car is the first variant and thus the standard one. If a null object is serialized, the standard type is chosen.
+        Assertions.assertNotEquals(serializedCar, serializedNull);
+    }
 }
