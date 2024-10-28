@@ -23,4 +23,40 @@ public interface SerializationContainer extends SerializationElement {
     default boolean isContainer() {
         return true;
     }
+
+    default void set(String key, boolean value){
+        set(key, getContext().create(value));
+    }
+
+    default void set(String key, byte value){
+        set(key, getContext().create(value));
+    }
+
+    default void set(String key, short value){
+        set(key, getContext().create(value));
+    }
+
+    default void set(String key, int value){
+        set(key, getContext().create(value));
+    }
+
+    default void set(String key, long value){
+        set(key, getContext().create(value));
+    }
+
+    default void set(String key, float value){
+        set(key, getContext().create(value));
+    }
+
+    default void set(String key, double value){
+        set(key, getContext().create(value));
+    }
+
+    default void set(String key, char value){
+        set(key, getContext().create(value));
+    }
+
+    default void set(String key, String value){
+        set(key, getContext().create(value));
+    }
 }
