@@ -11,6 +11,22 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public abstract class SerializerContextTests extends ContextBasedTest {
+
+    @Test
+    public void testAllSerializersOfSameTypeAreEqual() {
+        Assertions.assertEquals(context(), context());
+    }
+
+    @Test
+    public void testSerializerConversion() {
+        Person person = new Person("Hans", 23, Gender.MALE);
+        SerializationElement element = Person.SERIALIZER.serialize(context(), person);
+
+        SerializationElement afterConversion = context().convert(element, true);
+        Assertions.assertEquals(element, afterConversion);
+    }
+
+
     @Test
     public void testSerializationElementTestSimpleIsNull(){
         SerializationElement container = context().createNull();
