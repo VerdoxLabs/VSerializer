@@ -97,4 +97,17 @@ public class JsonSerializationElement implements SerializationElement {
                 "jsonElement=" + jsonElement +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JsonSerializationElement that = (JsonSerializationElement) o;
+        return Objects.equals(jsonElement, that.jsonElement);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(jsonElement);
+    }
 }

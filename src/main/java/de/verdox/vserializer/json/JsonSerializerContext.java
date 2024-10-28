@@ -108,4 +108,9 @@ public class JsonSerializerContext implements SerializationContext {
             return new JsonSerializationPrimitive(this, jsonElement.getAsJsonPrimitive());
         throw new RuntimeException("The child object " + jsonElement + " is not: container, array, primitive, null. This is a bug!");
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof JsonSerializerContext;
+    }
 }

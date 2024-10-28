@@ -7,4 +7,9 @@ public class JsonSerializationNull extends JsonSerializationElement implements S
     JsonSerializationNull(JsonSerializerContext serializerContext) {
         super(serializerContext, JsonNull.INSTANCE);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof JsonSerializationNull;
+    }
 }
