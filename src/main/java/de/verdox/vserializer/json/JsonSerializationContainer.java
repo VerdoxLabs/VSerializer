@@ -21,7 +21,7 @@ public class JsonSerializationContainer extends JsonSerializationElement impleme
     @Override
     public @NotNull SerializationElement get(String key) {
         JsonElement jsonChild = jsonElement.getAsJsonObject().get(key);
-        return getContext().toElement(jsonElement);
+        return getContext().toElement(jsonChild);
     }
 
     @Override
