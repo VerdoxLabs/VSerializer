@@ -1,8 +1,6 @@
 package test;
 
-import de.verdox.vserializer.generic.SerializationElement;
-import de.verdox.vserializer.generic.Serializer;
-import de.verdox.vserializer.generic.SerializerBuilder;
+import de.verdox.vserializer.generic.*;
 import model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -82,5 +80,95 @@ public abstract class SerializerTests extends ContextBasedTest {
         SerializationElement serializedNull = GroundVehicle.VEHICLE_SELECTION_SERIALIZER.serialize(context(), null);
         // This test passes since car is the first variant and thus the standard one. If a null object is serialized, the standard type is chosen.
         Assertions.assertNotEquals(serializedCar, serializedNull);
+    }
+
+    @Test
+    void testRecognizeByte() {
+        SerializationPrimitive primitive = context().create((byte) 1);
+        Assertions.assertTrue(primitive.isByte());
+    }
+
+    @Test
+    void testRecognizeByteFromContainer() {
+        SerializationContainer container = context().createContainer();
+        SerializationPrimitive primitive = context().create((byte) 1);
+
+        container.set("child", primitive);
+        Assertions.assertTrue(container.get("child").getAsPrimitive().isByte());
+    }
+
+    @Test
+    void testRecognizeShort() {
+        SerializationPrimitive primitive = context().create((short) 1);
+        Assertions.assertTrue(primitive.isShort());
+    }
+
+    @Test
+    void testRecognizeShortFromContainer() {
+        SerializationContainer container = context().createContainer();
+        SerializationPrimitive primitive = context().create((short) 1);
+
+        container.set("child", primitive);
+        Assertions.assertTrue(container.get("child").getAsPrimitive().isShort());
+    }
+
+    @Test
+    void testRecognizeInteger() {
+        SerializationPrimitive primitive = context().create(1);
+        Assertions.assertTrue(primitive.isInteger());
+    }
+
+    @Test
+    void testRecognizeIntegerFromContainer() {
+        SerializationContainer container = context().createContainer();
+        SerializationPrimitive primitive = context().create(1);
+
+        container.set("child", primitive);
+        Assertions.assertTrue(container.get("child").getAsPrimitive().isInteger());
+    }
+
+    @Test
+    void testRecognizeLong() {
+        SerializationPrimitive primitive = context().create(1L);
+        Assertions.assertTrue(primitive.isLong());
+    }
+
+    @Test
+    void testRecognizeLongFromContainer() {
+        SerializationContainer container = context().createContainer();
+        SerializationPrimitive primitive = context().create(1L);
+
+        container.set("child", primitive);
+        Assertions.assertTrue(container.get("child").getAsPrimitive().isLong());
+    }
+
+    @Test
+    void testRecognizeFloat() {
+        SerializationPrimitive primitive = context().create(1F);
+        Assertions.assertTrue(primitive.isFloat());
+    }
+
+    @Test
+    void testRecognizeFloatFromContainer() {
+        SerializationContainer container = context().createContainer();
+        SerializationPrimitive primitive = context().create(1F);
+
+        container.set("child", primitive);
+        Assertions.assertTrue(container.get("child").getAsPrimitive().isFloat());
+    }
+
+    @Test
+    void testRecognizeDouble() {
+        SerializationPrimitive primitive = context().create(1D);
+        Assertions.assertTrue(primitive.isDouble());
+    }
+
+    @Test
+    void testRecognizeDoubleFromContainer() {
+        SerializationContainer container = context().createContainer();
+        SerializationPrimitive primitive = context().create(1D);
+
+        container.set("child", primitive);
+        Assertions.assertTrue(container.get("child").getAsPrimitive().isDouble());
     }
 }
