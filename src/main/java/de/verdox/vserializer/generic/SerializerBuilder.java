@@ -19,6 +19,45 @@ public class SerializerBuilder<T> {
         return new SerializerBuilder<>(id, type);
     }
 
+    /**
+     * Used to create a Serializer that takes complex objects and serializes them into a primitive type.
+     * This is useful when you don't want to serialize the object itself but only a reference to it (e.g. by referencing a registry key).
+     *
+     * @param id                  The id of the serializer
+     * @param type                the complex object type
+     * @param primitiveSerializer The primitive serializer
+     * @param objectToPrimitive   the object to primitive function
+     * @param primitiveToObject   the primitive to object function
+     * @param <T>                 the complex object type
+     * @param <P>                 the primitive type
+     * @return the new serializer
+     */
+    public static <T, P> Serializer<T> createObjectToPrimitiveSerializer(String id, Class<? extends T> type, Serializer.Primitive<P> primitiveSerializer, Function<T, P> objectToPrimitive, Function<P, T> primitiveToObject) {
+        return new Serializer<>() {
+            @Override
+            public SerializationElement serialize(SerializationContext serializationContext, T object) {
+                P primitive = objectToPrimitive.apply(object);
+                return primitiveSerializer.serialize(serializationContext, primitive);
+            }
+
+            @Override
+            public T deserialize(SerializationElement serializedElement) {
+                P primitive = primitiveSerializer.deserialize(serializedElement);
+                return primitiveToObject.apply(primitive);
+            }
+
+            @Override
+            public String id() {
+                return id;
+            }
+
+            @Override
+            public Class<? extends T> getType() {
+                return type;
+            }
+        };
+    }
+
     private final Map<String, SerializableField<T, ?>> fields = new HashMap<>();
     private ConstructorSerializer constructorSerializer;
 
