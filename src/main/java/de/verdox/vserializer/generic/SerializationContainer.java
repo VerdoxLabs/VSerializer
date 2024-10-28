@@ -59,4 +59,8 @@ public interface SerializationContainer extends SerializationElement {
     default void set(String key, String value){
         set(key, getContext().create(value));
     }
+
+    default int size(){
+        return getChildKeys().size();
+    }
 }
