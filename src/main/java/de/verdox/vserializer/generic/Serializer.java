@@ -4,10 +4,7 @@ import de.verdox.vserializer.SerializableField;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -425,49 +422,29 @@ public interface Serializer<T> {
         }
     }
 
-    class Types<T> implements Serializer<T> {
-        private final String id;
-        private final Class<? extends T> type;
-        private final java.util.Map<String, Serializer<T>> types = new HashMap<>();
+    /**
+     * A variant serializer that collects multiple serializers as different variants for the same serialization type.
+     *
+     * @param <T> The serialization type
+     * @param <R> The variant type collected
+     */
+    abstract class VariantsSerializer<T, R> implements Serializer<T> {
+        protected final String id;
+        protected final Class<? extends T> type;
+        protected final java.util.Map<String, R> variants = new HashMap<>();
+        protected final Set<Class<? extends T>> containedTypes = new HashSet<>();
 
-        public static <T> Types<T> create(String id, Class<? extends T> type) {
-            return new Types<>(id, type);
-        }
-
-        private Types(String id, Class<? extends T> type) {
+        private VariantsSerializer(String id, Class<? extends T> type) {
             this.id = id;
             this.type = type;
         }
 
-        public <R extends T> Types<T> type(String id, Serializer<R> variantSerializer) {
-            types.put(id, (Serializer<T>) variantSerializer);
+        protected VariantsSerializer<T, R> addVariant(String id, R variant, Class<? extends T> variantType) {
+            variants.put(id, variant);
+            if (containedTypes.contains(variantType))
+                throw new IllegalArgumentException("The serializer " + id + " does already contain a type serializer for the type " + variantType);
+            containedTypes.add(variantType);
             return this;
-        }
-
-        @Override
-        public SerializationElement serialize(SerializationContext serializationContext, T object) {
-            SerializationContainer container = serializationContext.createContainer();
-
-            String type = types.entrySet().stream().filter(stringVariantEntry -> stringVariantEntry.getValue().getType().equals(object.getClass()))
-                    .map(java.util.Map.Entry::getKey).findAny().orElseThrow(() -> new IllegalStateException("Types Serializer " + id + " could not find a variant for type " + object.getClass()));
-
-            container.set("type", serializationContext.create(type));
-            container.set(type, types.get(type).serialize(serializationContext, object));
-            return container;
-        }
-
-        @Override
-        public T deserialize(SerializationElement serializedElement) {
-            SerializationContainer container = serializedElement.getAsContainer();
-            if (!container.contains("type"))
-                return null;
-
-            String type = container.get("type").getAsString();
-            if (!types.containsKey(type))
-                throw new IllegalArgumentException("The type " + type + " is not known in this Selection Serializer");
-            if (!container.contains(type))
-                throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element "+container);
-            return types.get(type).deserialize(container.get(type));
         }
 
         @Override
@@ -481,31 +458,72 @@ public interface Serializer<T> {
         }
     }
 
-    class Selection<T> implements Serializer<T> {
-        private final String id;
-        private final Class<? extends T> type;
+    class Types<T> extends VariantsSerializer<T, Serializer<T>> {
+        public static <T> Types<T> create(String id, Class<? extends T> type) {
+            return new Types<>(id, type);
+        }
 
+        private Types(String id, Class<? extends T> type) {
+            super(id, type);
+        }
+
+        public <R extends T> Types<T> type(String id, Serializer<R> variantSerializer) {
+            return (Types<T>) addVariant(id, (Serializer<T>) variantSerializer, variantSerializer.getType());
+        }
+
+        @Override
+        public SerializationElement serialize(SerializationContext serializationContext, T object) {
+            SerializationContainer container = serializationContext.createContainer();
+
+            String type = variants.entrySet().stream().filter(stringVariantEntry -> stringVariantEntry.getValue().getType().equals(object.getClass()))
+                    .map(java.util.Map.Entry::getKey).findAny().orElseThrow(() -> new IllegalStateException("Types Serializer " + id + " could not find a variant for type " + object.getClass()));
+
+            container.set("type", serializationContext.create(type));
+            container.set(type, variants.get(type).serialize(serializationContext, object));
+            return container;
+        }
+
+        @Override
+        public T deserialize(SerializationElement serializedElement) {
+            SerializationContainer container = serializedElement.getAsContainer();
+            if (!container.contains("type"))
+                return null;
+
+            String type = container.get("type").getAsString();
+            if (!variants.containsKey(type))
+                throw new IllegalArgumentException("The type " + type + " is not known in this Selection Serializer");
+            if (!container.contains(type))
+                throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element "+container);
+            return variants.get(type).deserialize(container.get(type));
+        }
+    }
+
+    /**
+     * A selection serializer should be used when an object is configured in a config file. The Serializer will always provide all variants.
+     * A variant can be picked by changing the "type" field in the {@link SerializationElement} which is normally written into the config file.
+     * If you serialize an object with this serializer, the serializer will search for the right variant based on its class type.
+     * If the serializer finds the right type it will write the object into the respective field. Else it will throw an {@link IllegalStateException}
+     *
+     * @param <T> The serialized type.
+     */
+    class Selection<T> extends VariantsSerializer<T, Selection.Variant<T>> {
         public static <T> Selection<T> create(String id, Class<? extends T> type) {
             return new Selection<>(id, type);
         }
-
-        private final java.util.Map<String, Selection.Variant<T>> variants = new HashMap<>();
         private String standardVariantID;
         private Selection.Variant<T> standardVariant;
 
         private Selection(String id, Class<? extends T> type) {
-            this.id = id;
-            this.type = type;
+            super(id, type);
         }
 
         public <R extends T> Selection<T> variant(String id, Serializer<R> variantSerializer, R variantObject) {
             Selection.Variant<T> variant = (Selection.Variant<T>) new Selection.Variant<>(variantSerializer, variantObject);
-            variants.put(id, variant);
-            if (standardVariantID == null)
+            if (standardVariantID != null && standardVariant == null){
                 standardVariantID = id;
-            if (standardVariant == null)
                 standardVariant = variant;
-            return this;
+            }
+            return (Selection<T>) addVariant(id, variant, variantSerializer.getType());
         }
 
         public <R extends T> Selection<T> variant(String id, Dummy<R> variantSerializer) {
@@ -561,16 +579,6 @@ public interface Serializer<T> {
             if (!container.contains(type) && variant.variant != null)
                 throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element "+container);
             return variants.get(type).serializer().deserialize(container.get(type));
-        }
-
-        @Override
-        public String id() {
-            return id;
-        }
-
-        @Override
-        public Class<? extends T> getType() {
-            return type;
         }
 
         private record Variant<T>(Serializer<T> serializer, T variant) {
