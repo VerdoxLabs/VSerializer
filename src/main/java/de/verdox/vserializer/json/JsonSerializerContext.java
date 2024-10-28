@@ -1,10 +1,12 @@
 package de.verdox.vserializer.json;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonNull;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import de.verdox.vserializer.generic.*;
+import de.verdox.vserializer.generic.SerializationContext;
+import de.verdox.vserializer.generic.SerializationElement;
+import de.verdox.vserializer.generic.SerializationNull;
 import de.verdox.vserializer.util.gson.JsonUtil;
 
 import java.io.File;
@@ -88,5 +90,22 @@ public class JsonSerializerContext implements SerializationContext {
     public void writeToFile(SerializationElement serializationElement, File file) throws IOException {
         if(serializationElement instanceof JsonSerializationElement jsonSerializationElement && jsonSerializationElement.jsonElement.isJsonObject())
             JsonUtil.writeJsonObjectToFile(jsonSerializationElement.jsonElement.getAsJsonObject(), file);
+    }
+
+    @Override
+    public SerializationElement readFromFile(File file) throws IOException {
+        return toElement(JsonUtil.readJsonFromFile(file));
+    }
+
+    public JsonSerializationElement toElement(JsonElement jsonElement) {
+        if (jsonElement == null || jsonElement.isJsonNull())
+            return new JsonSerializationNull(this);
+        else if (jsonElement.isJsonObject())
+            return new JsonSerializationContainer(this, jsonElement.getAsJsonObject());
+        else if (jsonElement.isJsonArray())
+            return new JsonSerializationArray(this, jsonElement.getAsJsonArray());
+        else if (jsonElement.isJsonPrimitive())
+            return new JsonSerializationPrimitive(this, jsonElement.getAsJsonPrimitive());
+        throw new RuntimeException("The child object " + jsonElement + " is not: container, array, primitive, null. This is a bug!");
     }
 }

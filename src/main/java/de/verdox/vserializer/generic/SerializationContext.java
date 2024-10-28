@@ -33,4 +33,5 @@ public interface SerializationContext {
     SerializationNull createNull();
 
     void writeToFile(SerializationElement element, File file) throws IOException;
+    SerializationElement readFromFile(File file) throws IOException;
 }
