@@ -1,5 +1,8 @@
 package de.verdox.vserializer.generic;
 
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 public interface SerializationArray extends SerializationElement, Iterable<SerializationElement> {
     int length();
 
@@ -20,6 +23,10 @@ public interface SerializationArray extends SerializationElement, Iterable<Seria
     @Override
     default SerializationArray getAsArray(){
         return this;
+    }
+
+    default Stream<SerializationElement> stream() {
+        return StreamSupport.stream(spliterator(), false);
     }
 
     @Override
