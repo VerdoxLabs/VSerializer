@@ -65,4 +65,8 @@ public interface SerializationContainer extends SerializationElement {
     default int size(){
         return getChildKeys().size();
     }
+
+    default boolean isEmpty(){
+        return getChildKeys().isEmpty();
+    }
 }
