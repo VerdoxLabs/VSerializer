@@ -90,4 +90,11 @@ public class JsonSerializationElement implements SerializationElement {
     public JsonElement getJsonElement() {
         return jsonElement;
     }
+
+    @Override
+    public String toString() {
+        return "JsonSerializationElement{" +
+                "jsonElement=" + jsonElement +
+                '}';
+    }
 }

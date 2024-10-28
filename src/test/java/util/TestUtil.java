@@ -5,8 +5,6 @@ import de.verdox.vserializer.generic.SerializationElement;
 import de.verdox.vserializer.generic.Serializer;
 import org.junit.jupiter.api.Assertions;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.IntFunction;
@@ -65,9 +63,8 @@ public class TestUtil {
         testSerialization(serializationContext, primitiveSerializer, primitive);
     }
 
-    public static <T> void testSerialization(SerializationContext serializationContext, Serializer<T> primitiveSerializer, T primitive){
-        SerializationElement serializationElement = primitiveSerializer.serialize(serializationContext, primitive);
-        Assertions.assertEquals(primitive, primitiveSerializer.deserialize(serializationElement));
+    public static <T> void testSerialization(SerializationContext serializationContext, Serializer<T> serializer, T element) {
+        SerializationElement serializationElement = serializer.serialize(serializationContext, element);
+        Assertions.assertEquals(element, serializer.deserialize(serializationElement));
     }
-
 }

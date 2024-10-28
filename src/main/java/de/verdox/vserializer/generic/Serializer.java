@@ -466,7 +466,7 @@ public interface Serializer<T> {
             if (!types.containsKey(type))
                 throw new IllegalArgumentException("The type " + type + " is not known in this Selection Serializer");
             if (!container.contains(type))
-                throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the Json");
+                throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element "+container);
             return types.get(type).deserialize(container.get(type));
         }
 
@@ -556,8 +556,10 @@ public interface Serializer<T> {
             String type = container.get("type").getAsString();
             if (!variants.containsKey(type))
                 throw new IllegalArgumentException("The type " + type + " is not known in this Selection Serializer");
-            if (!container.contains(type))
-                throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the Json");
+
+            Variant<?> variant = variants.get(type);
+            if (!container.contains(type) && variant.variant != null)
+                throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element "+container);
             return variants.get(type).serializer().deserialize(container.get(type));
         }
 

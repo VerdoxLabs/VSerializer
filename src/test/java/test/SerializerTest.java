@@ -1,6 +1,11 @@
 package test;
 
+import de.verdox.vserializer.generic.SerializationElement;
+import de.verdox.vserializer.generic.Serializer;
+import model.Selectable;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import util.TestInputs;
@@ -46,5 +51,32 @@ public abstract class SerializerTest extends ContextBasedTest {
     @DisplayName("Run Map Serialization Test")
     void testMapSerialization(TestInputs.TestInput<?> input) {
         input.runMapTest(context());
+    }
+
+    @Test
+    void testSelectionSerializerWithEmptyAsStandard(){
+        final Serializer<Selectable> SELECTION_SERIALIZER =
+                Serializer.Selection.create("selection", Selectable.class)
+                        .empty("empty")
+                        .variant("var1", Selectable.SERIALIZER, new Selectable("var1", true))
+                        .variant("var2", Selectable.SERIALIZER, new Selectable("var2", false))
+                ;
+
+        SerializationElement element = SELECTION_SERIALIZER.serialize(context(), null);
+        Assertions.assertEquals(context().createNull(), element);
+        Assertions.assertNull(SELECTION_SERIALIZER.deserialize(element));
+    }
+
+    @Test
+    void testSelectionSerializerWithEmptyAtEnd(){
+        final Serializer<Selectable> SELECTION_SERIALIZER =
+                Serializer.Selection.create("selection", Selectable.class)
+                        .variant("var1", Selectable.SERIALIZER, new Selectable("var1", true))
+                        .variant("var2", Selectable.SERIALIZER, new Selectable("var2", false))
+                        .empty("empty")
+                ;
+
+        SerializationElement element = SELECTION_SERIALIZER.serialize(context(), null);
+        Assertions.assertNull(SELECTION_SERIALIZER.deserialize(element));
     }
 }
