@@ -104,3 +104,8 @@ Sure, just use the SerializationContext in this case!
         context.writeToFile(context, new File(...));
         context.readFromFile(new File(...))
 ```
+
+### How can I use this dependency? ###
+Right now this project lacks a distribution strategy. 
+For now, it would be best practice to clone the repo and install the project as a dependency on your local maven repo. 
+Alternatively, you can use jitpack.io.
