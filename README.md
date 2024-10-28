@@ -93,3 +93,14 @@ SerializationContainer serializationElement = Person.SERIALIZER.serialize(contex
 
 Person deserializedPerson = Person.SERIALIZER.deserialize(person).getAsContainer();
 ```
+
+### I want to save my serialized data! ###
+Sure, just use the SerializationContext in this case!
+```java
+        SerializationContext context = new JsonSerializationContext();
+        Person person = new Person(...);
+        SerializationContainer serializationElement = Person.SERIALIZER.serialize(context, person).getAsContainer();
+        
+        context.writeToFile(context, new File(...));
+        context.readFromFile(new File(...))
+```
