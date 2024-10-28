@@ -21,15 +21,7 @@ public class JsonSerializationContainer extends JsonSerializationElement impleme
     @Override
     public @NotNull SerializationElement get(String key) {
         JsonElement jsonChild = jsonElement.getAsJsonObject().get(key);
-        if (jsonChild == null || jsonChild.isJsonNull())
-            return new JsonSerializationNull(getContext());
-        else if (jsonChild.isJsonObject())
-            return new JsonSerializationContainer(getContext(), jsonChild.getAsJsonObject());
-        else if (jsonChild.isJsonArray())
-            return new JsonSerializationArray(getContext(), jsonChild.getAsJsonArray());
-        else if (jsonChild.isJsonPrimitive())
-            return new JsonSerializationPrimitive(getContext(), jsonChild.getAsJsonPrimitive());
-        throw new RuntimeException("The child object with key " + key + " is not: container, array, primitive, null. This is a bug!");
+        return getContext().toElement(jsonElement);
     }
 
     @Override
@@ -39,7 +31,12 @@ public class JsonSerializationContainer extends JsonSerializationElement impleme
 
     @Override
     public void set(String key, SerializationElement serializationElement) {
-        getJsonElement().add(key, ((JsonSerializationElement) serializationElement).jsonElement);
+        getJsonElement().add(key, ((JsonSerializationElement) getContext().convert(serializationElement, false)).jsonElement);
+    }
+
+    @Override
+    public void remove(String key) {
+        getJsonElement().remove(key);
     }
 
     @Override

@@ -20,23 +20,22 @@ public class JsonSerializationArray extends JsonSerializationElement implements 
 
     @Override
     public JsonSerializationElement get(int index) {
-        return new JsonSerializationElement(getContext(), jsonElement.getAsJsonArray().get(index));
+        return getContext().toElement(jsonElement.getAsJsonArray().get(index));
     }
 
     @Override
     public void add(SerializationElement serializationElement) {
-        jsonElement.getAsJsonArray().add(((JsonSerializationElement) serializationElement).jsonElement);
+        jsonElement.getAsJsonArray().add(((JsonSerializationElement) getContext().convert(serializationElement, false)).jsonElement);
     }
 
     @Override
-
     public void set(int index, SerializationElement serializationElement) {
-        jsonElement.getAsJsonArray().set(index, ((JsonSerializationElement) serializationElement).jsonElement);
+        jsonElement.getAsJsonArray().set(index, ((JsonSerializationElement) getContext().convert(serializationElement, false)).jsonElement);
     }
 
     @Override
     public SerializationElement remove(int index) {
-        return new JsonSerializationElement(getContext(), jsonElement.getAsJsonArray().remove(index));
+        return getContext().toElement(jsonElement.getAsJsonArray().remove(index));
     }
 
     @Override
@@ -58,7 +57,7 @@ public class JsonSerializationArray extends JsonSerializationElement implements 
 
             @Override
             public SerializationElement next() {
-                return new JsonSerializationElement(getContext(), iterator.next());
+                return getContext().toElement(iterator.next());
             }
 
             @Override

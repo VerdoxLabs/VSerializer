@@ -7,6 +7,8 @@ import de.verdox.vserializer.generic.SerializationContext;
 import de.verdox.vserializer.generic.SerializationElement;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Objects;
+
 @ApiStatus.Experimental
 public class JsonSerializationElement implements SerializationElement {
     private final JsonSerializerContext serializerContext;
