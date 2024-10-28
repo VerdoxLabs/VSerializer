@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class JsonSerializationContainer extends JsonSerializationElement implements SerializationContainer {
-    public JsonSerializationContainer(JsonSerializerContext serializerContext, JsonObject jsonElement) {
+    JsonSerializationContainer(JsonSerializerContext serializerContext, JsonObject jsonElement) {
         super(serializerContext, jsonElement);
     }
 

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 
 public class JsonSerializationArray extends JsonSerializationElement implements SerializationArray {
-    public JsonSerializationArray(JsonSerializerContext serializerContext, JsonArray jsonElement) {
+    JsonSerializationArray(JsonSerializerContext serializerContext, JsonArray jsonElement) {
         super(serializerContext, jsonElement);
     }
 

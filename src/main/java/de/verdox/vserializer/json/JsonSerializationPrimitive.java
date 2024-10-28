@@ -4,7 +4,7 @@ import com.google.gson.JsonPrimitive;
 import de.verdox.vserializer.generic.SerializationPrimitive;
 
 public class JsonSerializationPrimitive extends JsonSerializationElement implements SerializationPrimitive {
-    public JsonSerializationPrimitive(JsonSerializerContext serializerContext, JsonPrimitive jsonElement) {
+    JsonSerializationPrimitive(JsonSerializerContext serializerContext, JsonPrimitive jsonElement) {
         super(serializerContext, jsonElement);
     }
 

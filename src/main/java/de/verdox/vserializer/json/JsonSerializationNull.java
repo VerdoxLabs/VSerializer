@@ -4,7 +4,7 @@ import com.google.gson.JsonNull;
 import de.verdox.vserializer.generic.SerializationNull;
 
 public class JsonSerializationNull extends JsonSerializationElement implements SerializationNull {
-    public JsonSerializationNull(JsonSerializerContext serializerContext) {
+    JsonSerializationNull(JsonSerializerContext serializerContext) {
         super(serializerContext, JsonNull.INSTANCE);
     }
 }

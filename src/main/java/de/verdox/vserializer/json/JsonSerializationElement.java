@@ -12,7 +12,7 @@ public class JsonSerializationElement implements SerializationElement {
     private final JsonSerializerContext serializerContext;
     protected final JsonElement jsonElement;
 
-    public JsonSerializationElement(JsonSerializerContext serializerContext, JsonElement jsonElement) {
+    JsonSerializationElement(JsonSerializerContext serializerContext, JsonElement jsonElement) {
         this.serializerContext = serializerContext;
         this.jsonElement = jsonElement;
     }
