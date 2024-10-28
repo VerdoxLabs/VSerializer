@@ -14,6 +14,8 @@ public interface SerializationContainer extends SerializationElement {
 
     void set(String key, SerializationElement serializationElement);
 
+    void remove(String key);
+
     @Override
     default SerializationContainer getAsContainer(){
         return this;
