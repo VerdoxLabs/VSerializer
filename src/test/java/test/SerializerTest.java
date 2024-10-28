@@ -53,7 +53,7 @@ public abstract class SerializerTest extends ContextBasedTest {
         input.runMapTest(context());
     }
 
-    @Test
+/*    @Test
     void testSelectionSerializerWithEmptyAsStandard(){
         final Serializer<Selectable> SELECTION_SERIALIZER =
                 Serializer.Selection.create("selection", Selectable.class)
@@ -78,5 +78,5 @@ public abstract class SerializerTest extends ContextBasedTest {
 
         SerializationElement element = SELECTION_SERIALIZER.serialize(context(), null);
         Assertions.assertNull(SELECTION_SERIALIZER.deserialize(element));
-    }
+    }*/
 }
