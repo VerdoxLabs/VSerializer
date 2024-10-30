@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "de.verdox.vserializer"
-version = "1.0.3"
+version = "1.0.4"
 description = "vserializer"
 
 repositories {

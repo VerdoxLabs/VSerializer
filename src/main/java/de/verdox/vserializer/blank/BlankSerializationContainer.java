@@ -7,11 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Objects;
 
-public class BlankSerializationContainer<C extends SerializationContext> extends BlankSerializationElement<C> implements SerializationContainer {
+public class BlankSerializationContainer extends BlankSerializationElement implements SerializationContainer {
     private final LinkedHashMap<String, SerializationElement> map = new LinkedHashMap<>();
-    public BlankSerializationContainer(C serializationContext) {
+    public BlankSerializationContainer(SerializationContext serializationContext) {
         super(serializationContext);
     }
 
@@ -22,29 +23,29 @@ public class BlankSerializationContainer<C extends SerializationContext> extends
 
     @Override
     public @NotNull SerializationElement get(String key) {
-        return map.getOrDefault(key, getContext().createNull());
+        return map.getOrDefault(key.toLowerCase(Locale.ROOT), getContext().createNull());
     }
 
     @Override
     public boolean contains(String key) {
-        return map.containsKey(key);
+        return map.containsKey(key.toLowerCase(Locale.ROOT));
     }
 
     @Override
     public void set(String key, SerializationElement serializationElement) {
-        map.put(key, getContext().convert(serializationElement, false));
+        map.put(key.toLowerCase(Locale.ROOT), getContext().convert(serializationElement, false));
     }
 
     @Override
     public void remove(String key) {
-        map.remove(key);
+        map.remove(key.toLowerCase(Locale.ROOT));
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BlankSerializationContainer<?> that = (BlankSerializationContainer<?>) o;
+        BlankSerializationContainer that = (BlankSerializationContainer) o;
         return Objects.equals(map, that.map);
     }
 

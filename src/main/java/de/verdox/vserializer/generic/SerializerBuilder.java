@@ -1,5 +1,6 @@
 package de.verdox.vserializer.generic;
 
+import com.google.gson.reflect.TypeToken;
 import de.verdox.vserializer.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +18,10 @@ public class SerializerBuilder<T> {
 
     public static <T> SerializerBuilder<T> create(String id, Class<? extends T> type) {
         return new SerializerBuilder<>(id, type);
+    }
+
+    public static <T> SerializerBuilder<T> create(String id, TypeToken<T> typeToken) {
+        return new SerializerBuilder<>(id, ((Class<? extends T>) typeToken.getRawType()));
     }
 
     /**

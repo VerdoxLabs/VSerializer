@@ -34,8 +34,6 @@ public interface SerializationArray extends SerializationElement, Iterable<Seria
         return true;
     }
 
-
-
     default boolean isBoolArray() {
         for (SerializationElement element : this) {
             if (!element.isPrimitive() || !element.getAsPrimitive().isBoolean())
@@ -79,6 +77,14 @@ public interface SerializationArray extends SerializationElement, Iterable<Seria
     default boolean isIntArray() {
         for (SerializationElement element : this) {
             if (!element.isPrimitive() || !element.getAsPrimitive().isInteger())
+                return false;
+        }
+        return true;
+    }
+
+    default boolean isLongArray() {
+        for (SerializationElement element : this) {
+            if (!element.isPrimitive() || !element.getAsPrimitive().isLong())
                 return false;
         }
         return true;

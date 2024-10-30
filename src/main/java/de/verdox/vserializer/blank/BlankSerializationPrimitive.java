@@ -9,50 +9,50 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Objects;
 
-public class BlankSerializationPrimitive<C extends SerializationContext> extends BlankSerializationElement<C> implements SerializationPrimitive {
+public class BlankSerializationPrimitive extends BlankSerializationElement implements SerializationPrimitive {
     private final Object value;
 
-    public BlankSerializationPrimitive(C serializationContext, boolean value) {
+    public BlankSerializationPrimitive(SerializationContext serializationContext, boolean value) {
         super(serializationContext);
         this.value = value;
     }
 
-    public BlankSerializationPrimitive(C serializationContext, String value) {
+    public BlankSerializationPrimitive(SerializationContext serializationContext, String value) {
         super(serializationContext);
         this.value = Objects.requireNonNull(value);
     }
 
-    public BlankSerializationPrimitive(C serializationContext, Number value) {
+    public BlankSerializationPrimitive(SerializationContext serializationContext, Number value) {
         super(serializationContext);
         this.value = Objects.requireNonNull(value);
     }
 
-    public BlankSerializationPrimitive(C serializationContext, char value) {
+    public BlankSerializationPrimitive(SerializationContext serializationContext, char value) {
         super(serializationContext);
         this.value = String.valueOf(value);
     }
 
-    public BlankSerializationPrimitive(C serializationContext, byte value) {
+    public BlankSerializationPrimitive(SerializationContext serializationContext, byte value) {
         this(serializationContext, Byte.valueOf(value));
     }
 
-    public BlankSerializationPrimitive(C serializationContext, short value) {
+    public BlankSerializationPrimitive(SerializationContext serializationContext, short value) {
         this(serializationContext, Short.valueOf(value));
     }
 
-    public BlankSerializationPrimitive(C serializationContext, int value) {
+    public BlankSerializationPrimitive(SerializationContext serializationContext, int value) {
         this(serializationContext, Integer.valueOf(value));
     }
 
-    public BlankSerializationPrimitive(C serializationContext, long value) {
+    public BlankSerializationPrimitive(SerializationContext serializationContext, long value) {
         this(serializationContext, Long.valueOf(value));
     }
 
-    public BlankSerializationPrimitive(C serializationContext, float value) {
+    public BlankSerializationPrimitive(SerializationContext serializationContext, float value) {
         this(serializationContext, Float.valueOf(value));
     }
 
-    public BlankSerializationPrimitive(C serializationContext, double value) {
+    public BlankSerializationPrimitive(SerializationContext serializationContext, double value) {
         this(serializationContext, Double.valueOf(value));
     }
 
@@ -188,7 +188,7 @@ public class BlankSerializationPrimitive<C extends SerializationContext> extends
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        BlankSerializationPrimitive<?> other = (BlankSerializationPrimitive<?>) obj;
+        BlankSerializationPrimitive other = (BlankSerializationPrimitive) obj;
         if (value == null) {
             return other.value == null;
         }
@@ -212,7 +212,7 @@ public class BlankSerializationPrimitive<C extends SerializationContext> extends
         return value.equals(other.value);
     }
 
-    private static boolean isIntegral(BlankSerializationPrimitive<?> primitive) {
+    private static boolean isIntegral(BlankSerializationPrimitive primitive) {
         if (primitive.value instanceof Number) {
             Number number = (Number) primitive.value;
             return number instanceof BigInteger

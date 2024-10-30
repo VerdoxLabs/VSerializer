@@ -9,10 +9,10 @@ import de.verdox.vserializer.generic.SerializationElement;
  * This class is useful when you want to implement your own SerializationElements but want to do the conversion to serialization specific types at a later stage.
  *
  */
-public abstract class BlankSerializationElement<C extends SerializationContext> implements SerializationElement {
-    private final C serializationContext;
+public abstract class BlankSerializationElement implements SerializationElement {
+    private final SerializationContext serializationContext;
 
-    BlankSerializationElement(C serializationContext){
+    BlankSerializationElement(SerializationContext serializationContext){
         this.serializationContext = serializationContext;
     }
 
@@ -67,7 +67,7 @@ public abstract class BlankSerializationElement<C extends SerializationContext> 
     }
 
     @Override
-    public C getContext() {
+    public SerializationContext getContext() {
         return serializationContext;
     }
 }
