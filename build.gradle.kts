@@ -3,8 +3,8 @@ plugins {
     id("maven-publish")
 }
 
-group = "de.verdox.vserializer"
-version = "1.0.4"
+group = "io.github.derverdox"
+version = "1.0.5"
 description = "vserializer"
 
 repositories {
@@ -37,11 +37,11 @@ publishing {
     repositories.maven(repositories.mavenLocal())
     repositories {
         maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/VerdoxLabs/VSerializer")
+            name = "mavenCentral"
+            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
             credentials {
-                username = System.getenv("USERNAME")
-                password = System.getenv("TOKEN")
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD")
             }
         }
     }
