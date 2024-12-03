@@ -26,4 +26,5 @@ jobs:
         run: ./gradlew publish
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
