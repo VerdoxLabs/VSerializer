@@ -48,7 +48,7 @@ tasks.test {
 
 publishing {
     publications {
-        create<MavenPublication>("mavenJava") {
+        create<MavenPublication>("maven") {
             pom {
                 groupId = "de.verdox"
                 artifactId = "vserializer"
@@ -71,7 +71,6 @@ publishing {
             }
         }
     }
-    publications.create<MavenPublication>("maven").from(components["java"]);
     repositories {
         maven {
             name = "GitHubPackages"
