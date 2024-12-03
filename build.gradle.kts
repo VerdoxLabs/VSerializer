@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("maven-publish")
+    id("signing")
 }
 
 group = "io.github.derverdox"
@@ -25,6 +26,14 @@ dependencies {
     testImplementation("org.jetbrains:annotations:26.0.1")
     testImplementation("com.google.code.gson:gson:2.11.0")
     testImplementation("org.ow2.asm:asm-tree:9.7")
+}
+
+signing {
+    useInMemoryPgpKeys(
+        System.getenv("GPG_PRIVATE_KEY"),
+        null
+    )
+    sign(publishing.publications)
 }
 
 publishing {
