@@ -3,6 +3,8 @@ plugins {
     id("maven-publish")
 }
 
+version = "1.0.6"
+
 repositories {
     mavenCentral()
     mavenLocal()
