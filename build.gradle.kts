@@ -52,7 +52,7 @@ publishing {
             pom {
                 groupId = "de.verdox"
                 artifactId = "vserializer"
-                version = "1.0.5"
+                version = "1.0.5-SNAPSHOT"
                 from(components["java"])
                 url = "https://github.com/VerdoxLabs/VSerializer"
                 licenses {
