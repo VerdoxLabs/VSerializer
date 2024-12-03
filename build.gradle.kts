@@ -3,8 +3,6 @@ plugins {
     id("maven-publish")
 }
 
-version = "1.0.6"
-
 repositories {
     mavenCentral()
     mavenLocal()
@@ -52,7 +50,7 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             pom {
-                groupId = "io.github.derverdox"
+                groupId = "de.verdox"
                 artifactId = "vserializer"
                 version = "1.0.5"
                 from(components["java"])
@@ -70,11 +68,6 @@ publishing {
                         email = "mail.ysp@web.de"
                     }
                 }
-                /*                scm {
-                                    connection = "scm:git:git://github.com/VerdoxLabs/VSerializer.git"
-                                    developerConnection = "scm:git:ssh://github.com/VerdoxLabs/VSerializer.git"
-                                    url = "https://github.com/VerdoxLabs/VSerializer.git"
-                                }*/
             }
         }
     }
