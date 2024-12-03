@@ -1,20 +1,18 @@
 plugins {
     id("java")
     id("maven-publish")
-    id("signing")
 }
-
-group = "io.github.derverdox"
-version = "1.0.5"
-description = "vserializer"
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 java {
     // Configure the java toolchain. This allows gradle to auto-provision JDK 17 on systems that only have JDK 8 installed for example.
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    withSourcesJar()
+    withJavadocJar()
 }
 
 dependencies {
@@ -28,36 +26,9 @@ dependencies {
     testImplementation("org.ow2.asm:asm-tree:9.7")
 }
 
-signing {
-    useInMemoryPgpKeys(
-        System.getenv("GPG_PRIVATE_KEY"),
-        null
-    )
-    sign(publishing.publications)
-}
-
-publishing {
-    publications.create<MavenPublication>("maven").from(components["java"]);
-    publications {
-        create<MavenPublication>("lib") {
-            artifact(tasks.jar)
-        }
-    }
-    repositories.maven(repositories.mavenLocal())
-    repositories {
-        maven {
-            name = "mavenCentral"
-            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = System.getenv("OSSRH_USERNAME")
-                password = System.getenv("OSSRH_PASSWORD")
-            }
-        }
-    }
-}
-
-tasks{
+tasks {
     compileJava {
+
         options.encoding = Charsets.UTF_8.name() // We want UTF-8 for everything
 
         // Set the release flag. This configures what version bytecode the compiler will emit, as well as what JDK APIs are usable.
@@ -73,4 +44,47 @@ tasks{
 
 tasks.test {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            pom {
+                groupId = "io.github.derverdox"
+                artifactId = "vserializer"
+                version = "1.0.5"
+                from(components["java"])
+                url = "https://github.com/VerdoxLabs/VSerializer"
+                licenses {
+                    license {
+                        name = "GNU GENERAL PUBLIC LICENSE Version 3"
+                        url = "https://www.gnu.org/licenses/gpl-3.0.en.html"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "verdox"
+                        name = "Lukas Jonsson"
+                        email = "mail.ysp@web.de"
+                    }
+                }
+                /*                scm {
+                                    connection = "scm:git:git://github.com/VerdoxLabs/VSerializer.git"
+                                    developerConnection = "scm:git:ssh://github.com/VerdoxLabs/VSerializer.git"
+                                    url = "https://github.com/VerdoxLabs/VSerializer.git"
+                                }*/
+            }
+        }
+    }
+    publications.create<MavenPublication>("maven").from(components["java"]);
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/verdoxlabs/vserializer")
+            credentials {
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
+            }
+        }
+    }
 }
