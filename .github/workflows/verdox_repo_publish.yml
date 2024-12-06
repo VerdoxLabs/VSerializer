@@ -9,6 +9,10 @@ jobs:
   publish:
     runs-on: ubuntu-latest
 
+    env:
+      REPO_USER: ${{ secrets.REPO_USER }}
+      REPO_PASSWORD: ${{ secrets.REPO_PASSWORD }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -23,6 +27,3 @@ jobs:
 
       - name: Publish package
         run: ./gradlew publish
-        env:
-          REPO_USER: ${{ secrets.REPO_USER }}
-          REPO_PASSWORD: ${{ secrets.REPO_PASSWORD }}
