@@ -10,8 +10,18 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Objects;
 
+/**
+ * A blank implementation of a serialization container.
+ * Check out {@link BlankSerializationElement} for further information
+ */
 public class BlankSerializationContainer extends BlankSerializationElement implements SerializationContainer {
     private final LinkedHashMap<String, SerializationElement> map = new LinkedHashMap<>();
+
+    /**
+     * Standard constructor accepting the serialization context for this container
+     *
+     * @param serializationContext the context
+     */
     public BlankSerializationContainer(SerializationContext serializationContext) {
         super(serializationContext);
     }

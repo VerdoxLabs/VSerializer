@@ -11,6 +11,8 @@ import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 /**
+ * Serializers describe how an object is serialized and deserialized.
+ *
  * @param <T> the data type that is serialized
  */
 public interface Serializer<T> {

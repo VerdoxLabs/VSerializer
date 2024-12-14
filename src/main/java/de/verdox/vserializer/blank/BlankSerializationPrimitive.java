@@ -9,49 +9,113 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Objects;
 
+/**
+ * A blank implementation of a serialization primitive.
+ * Check out {@link BlankSerializationElement} for further information
+ */
 public class BlankSerializationPrimitive extends BlankSerializationElement implements SerializationPrimitive {
     private final Object value;
 
+    /**
+     * A direct constructor to construct the primitive from a primitive value
+     *
+     * @param serializationContext the context
+     * @param value                the primitive value
+     */
     public BlankSerializationPrimitive(SerializationContext serializationContext, boolean value) {
         super(serializationContext);
         this.value = value;
     }
 
+    /**
+     * A direct constructor to construct the primitive from a primitive value
+     *
+     * @param serializationContext the context
+     * @param value                the primitive value
+     */
     public BlankSerializationPrimitive(SerializationContext serializationContext, String value) {
         super(serializationContext);
         this.value = Objects.requireNonNull(value);
     }
 
+    /**
+     * A direct constructor to construct the primitive from a primitive value
+     *
+     * @param serializationContext the context
+     * @param value                the primitive value
+     */
     public BlankSerializationPrimitive(SerializationContext serializationContext, Number value) {
         super(serializationContext);
         this.value = Objects.requireNonNull(value);
     }
 
+    /**
+     * A direct constructor to construct the primitive from a primitive value
+     *
+     * @param serializationContext the context
+     * @param value                the primitive value
+     */
     public BlankSerializationPrimitive(SerializationContext serializationContext, char value) {
         super(serializationContext);
         this.value = String.valueOf(value);
     }
 
+    /**
+     * A direct constructor to construct the primitive from a primitive value
+     *
+     * @param serializationContext the context
+     * @param value                the primitive value
+     */
     public BlankSerializationPrimitive(SerializationContext serializationContext, byte value) {
         this(serializationContext, Byte.valueOf(value));
     }
 
+    /**
+     * A direct constructor to construct the primitive from a primitive value
+     *
+     * @param serializationContext the context
+     * @param value                the primitive value
+     */
     public BlankSerializationPrimitive(SerializationContext serializationContext, short value) {
         this(serializationContext, Short.valueOf(value));
     }
 
+    /**
+     * A direct constructor to construct the primitive from a primitive value
+     *
+     * @param serializationContext the context
+     * @param value                the primitive value
+     */
     public BlankSerializationPrimitive(SerializationContext serializationContext, int value) {
         this(serializationContext, Integer.valueOf(value));
     }
 
+    /**
+     * A direct constructor to construct the primitive from a primitive value
+     *
+     * @param serializationContext the context
+     * @param value                the primitive value
+     */
     public BlankSerializationPrimitive(SerializationContext serializationContext, long value) {
         this(serializationContext, Long.valueOf(value));
     }
 
+    /**
+     * A direct constructor to construct the primitive from a primitive value
+     *
+     * @param serializationContext the context
+     * @param value                the primitive value
+     */
     public BlankSerializationPrimitive(SerializationContext serializationContext, float value) {
         this(serializationContext, Float.valueOf(value));
     }
 
+    /**
+     * A direct constructor to construct the primitive from a primitive value
+     *
+     * @param serializationContext the context
+     * @param value                the primitive value
+     */
     public BlankSerializationPrimitive(SerializationContext serializationContext, double value) {
         this(serializationContext, Double.valueOf(value));
     }
@@ -109,13 +173,20 @@ public class BlankSerializationPrimitive extends BlankSerializationElement imple
     }
 
 
+    /**
+     * Gets this primitive as a {@link BigDecimal}
+     * @return the big decimal
+     */
     public BigDecimal getAsBigDecimal() {
         return value instanceof BigDecimal
                 ? (BigDecimal) value
                 : NumberLimits.parseBigDecimal(getAsString());
     }
 
-
+    /**
+     * Gets this primitive as a {@link BigInteger}
+     * @return the big integer
+     */
     public BigInteger getAsBigInteger() {
         return value instanceof BigInteger
                 ? (BigInteger) value

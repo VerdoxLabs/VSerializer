@@ -1,37 +1,90 @@
 package de.verdox.vserializer.generic;
 
+/**
+ * Represents a serialized primitive.
+ */
 public interface SerializationPrimitive extends SerializationElement {
+    /**
+     * Returns true if the primitive is a boolean
+     *
+     * @return true if it is
+     */
     boolean isBoolean();
 
+    /**
+     * Returns true if the primitive is a number
+     *
+     * @return true if it is
+     */
     boolean isNumber();
 
+    /**
+     * Returns true if the primitive is a string
+     *
+     * @return true if it is
+     */
     boolean isString();
 
-    default boolean isCharacter(){
+    /**
+     * Returns true if the primitive is a character
+     *
+     * @return true if it is
+     */
+    default boolean isCharacter() {
         return isString() && getAsString().length() == 1;
     }
 
-    default boolean isByte(){
+    /**
+     * Returns true if the primitive is a byte
+     *
+     * @return true if it is
+     */
+    default boolean isByte() {
         return isNumber() && getAsNumber() instanceof Byte;
     }
 
-    default boolean isShort(){
+    /**
+     * Returns true if the primitive is a short
+     *
+     * @return true if it is
+     */
+    default boolean isShort() {
         return isNumber() && getAsNumber() instanceof Short;
     }
 
-    default boolean isInteger(){
+    /**
+     * Returns true if the primitive is an integer
+     *
+     * @return true if it is
+     */
+    default boolean isInteger() {
         return isNumber() && getAsNumber() instanceof Integer;
     }
 
-    default boolean isLong(){
+    /**
+     * Returns true if the primitive is a long
+     *
+     * @return true if it is
+     */
+    default boolean isLong() {
         return isNumber() && getAsNumber() instanceof Long;
     }
 
-    default boolean isFloat(){
+    /**
+     * Returns true if the primitive is a float
+     *
+     * @return true if it is
+     */
+    default boolean isFloat() {
         return isNumber() && getAsNumber() instanceof Float;
     }
 
-    default boolean isDouble(){
+    /**
+     * Returns true if the primitive is a double
+     *
+     * @return true if it is
+     */
+    default boolean isDouble() {
         return isNumber() && getAsNumber() instanceof Double;
     }
 

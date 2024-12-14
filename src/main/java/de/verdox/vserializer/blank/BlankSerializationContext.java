@@ -4,6 +4,10 @@ import de.verdox.vserializer.generic.*;
 
 import java.io.File;
 
+/**
+ * A blank implementation of a serialization context.
+ * Check out {@link BlankSerializationElement} for further information
+ */
 public class BlankSerializationContext implements SerializationContext {
     @Override
     public SerializationPrimitive create(boolean value) {

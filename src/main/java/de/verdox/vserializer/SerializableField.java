@@ -30,14 +30,20 @@ public class SerializableField<T, R> {
         };
     }
 
-    public SerializableField(@Nullable String fieldName, Serializer<R> serializer, Function<T, R> getter){
+    public SerializableField(@Nullable String fieldName, Serializer<R> serializer, Function<T, R> getter) {
         this(fieldName, serializer, getter, null);
     }
 
-    public SerializableField(Serializer<R> serializer, Function<T, R> getter){
+    public SerializableField(Serializer<R> serializer, Function<T, R> getter) {
         this(null, serializer, getter, null);
     }
 
+    /**
+     * Writes a wrapped object to a serialization container
+     *
+     * @param serializationContainer the container
+     * @param wrapped                the wrapped element
+     */
     public void write(SerializationContainer serializationContainer, T wrapped) {
         try {
             R fieldValue = getter.apply(wrapped);
@@ -54,6 +60,12 @@ public class SerializableField<T, R> {
         }
     }
 
+    /**
+     * Reads a wrapped object from a serialization container
+     *
+     * @param serializationContainer the container
+     * @return the wrapped element
+     */
     public R read(SerializationContainer serializationContainer) {
         SerializationElement serialized = serializationContainer.get(fieldName == null ? serializer.id() : fieldName);
         if (Serializer.Null.isNull(serialized))
@@ -61,10 +73,20 @@ public class SerializableField<T, R> {
         return serializer.deserialize(serialized);
     }
 
+    /**
+     * Returns the setter of this field
+     *
+     * @return the setter
+     */
     public BiConsumer<T, Object> setter() {
         return setter;
     }
 
+    /**
+     * Returns the getter of this field
+     *
+     * @return the getter
+     */
     public Function<T, R> getter() {
         return getter;
     }

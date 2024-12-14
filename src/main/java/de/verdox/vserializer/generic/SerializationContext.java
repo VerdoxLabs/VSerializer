@@ -3,47 +3,147 @@ package de.verdox.vserializer.generic;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * A serialization context implements the representation of the various serialization elements.
+ */
 public interface SerializationContext {
+    /**
+     * Creates a context specific primitive from a primitive value
+     *
+     * @param value the primitive value
+     * @return the serialized primitive
+     */
     SerializationPrimitive create(boolean value);
 
+    /**
+     * Creates a context specific primitive from a primitive value
+     *
+     * @param value the primitive value
+     * @return the serialized primitive
+     */
     SerializationPrimitive create(char value);
 
+    /**
+     * Creates a context specific primitive from a primitive value
+     *
+     * @param value the primitive value
+     * @return the serialized primitive
+     */
     SerializationPrimitive create(String value);
 
+    /**
+     * Creates a context specific primitive from a primitive value
+     *
+     * @param value the primitive value
+     * @return the serialized primitive
+     */
     SerializationPrimitive create(Number value);
 
+    /**
+     * Creates a context specific primitive from a primitive value
+     *
+     * @param value the primitive value
+     * @return the serialized primitive
+     */
     SerializationPrimitive create(byte value);
 
+    /**
+     * Creates a context specific primitive from a primitive value
+     *
+     * @param value the primitive value
+     * @return the serialized primitive
+     */
     SerializationPrimitive create(short value);
 
+    /**
+     * Creates a context specific primitive from a primitive value
+     *
+     * @param value the primitive value
+     * @return the serialized primitive
+     */
     SerializationPrimitive create(int value);
 
+    /**
+     * Creates a context specific primitive from a primitive value
+     *
+     * @param value the primitive value
+     * @return the serialized primitive
+     */
     SerializationPrimitive create(long value);
 
+    /**
+     * Creates a context specific primitive from a primitive value
+     *
+     * @param value the primitive value
+     * @return the serialized primitive
+     */
     SerializationPrimitive create(float value);
 
+    /**
+     * Creates a context specific primitive from a primitive value
+     *
+     * @param value the primitive value
+     * @return the serialized primitive
+     */
     SerializationPrimitive create(double value);
 
+    /**
+     * Creates a context specific array
+     *
+     * @param length the length of the array
+     * @return the serialized primitive
+     */
     SerializationArray createArray(int length);
 
+    /**
+     * Creates a context specific dynamic array with provided values as start values.
+     *
+     * @param elements the starting elements
+     * @return the serialized primitive
+     */
     SerializationArray createArray(SerializationElement... elements);
 
+    /**
+     * Creates a context specific container
+     *
+     * @return the container
+     */
     SerializationContainer createContainer();
 
+    /**
+     * Creates a context specific null value
+     *
+     * @return the null value
+     */
     SerializationNull createNull();
 
+    /**
+     * Writes a serialization element into a file
+     *
+     * @param element the element to save
+     * @param file    the file
+     * @throws IOException if any io exception happens
+     */
     void writeToFile(SerializationElement element, File file) throws IOException;
+
+    /**
+     * Reads a serialization element from a file
+     *
+     * @param file the file
+     * @return the element read from the file
+     * @throws IOException if any io exception happens
+     */
     SerializationElement readFromFile(File file) throws IOException;
 
     /**
-     * Converts a {@link SerializationElement} into a {@link SerializationElement} in this {@link SerializationContext}
+     * Converts a {@link SerializationElement} from possibly another {@link SerializationContext} into a {@link SerializationElement} from this {@link SerializationContext}.
      *
      * @param element the serialization element from another serializer context
-     * @param force whether the conversion should happen, regardless of the context already being right
+     * @param force   whether the conversion should happen, regardless of the context already being right
      * @return the element in this serializer context
      */
     default SerializationElement convert(SerializationElement element, boolean force) {
-        if(!force && element.getContext().equals(this))
+        if (!force && element.getContext().equals(this))
             return element;
         if (element.isNull())
             return createNull();

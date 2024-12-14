@@ -10,6 +10,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * A blank implementation of a serialization array.
+ * Check out {@link BlankSerializationElement} for further information
+ */
 public class BlankSerializationArray extends BlankSerializationElement implements SerializationArray {
     private final List<SerializationElement> elements;
     private int boolCounter;
@@ -25,36 +29,68 @@ public class BlankSerializationArray extends BlankSerializationElement implement
     private int containerCounter;
     private boolean isConflicting;
 
+    /**
+     * A basic constructor with no standard elements
+     *
+     * @param serializationContext the context used for this element
+     */
     public BlankSerializationArray(SerializationContext serializationContext) {
         super(serializationContext);
         this.elements = new ArrayList<>(128);
     }
 
-    public BlankSerializationArray(SerializationContext blankSerializationContext, SerializationElement... elements) {
-        this(blankSerializationContext);
+    /**
+     * A basic constructor with standard elements
+     *
+     * @param elements             the standard elements
+     * @param serializationContext the context used for this element
+     */
+    public BlankSerializationArray(SerializationContext serializationContext, SerializationElement... elements) {
+        this(serializationContext);
         for (SerializationElement element : elements) {
             add(element);
         }
     }
 
-    public static BlankSerializationArray byNumbers(SerializationContext blankSerializationContext, Collection<? extends Number> values){
-        BlankSerializationArray array = new BlankSerializationArray(blankSerializationContext);
+    /**
+     * Returns a serialization array consisting of number values
+     *
+     * @param serializationContext the serialization context
+     * @param values               the values
+     * @return the array
+     */
+    public static BlankSerializationArray byNumbers(SerializationContext serializationContext, Collection<? extends Number> values) {
+        BlankSerializationArray array = new BlankSerializationArray(serializationContext);
         for (Number value : values)
-            array.add(blankSerializationContext.create(value));
+            array.add(serializationContext.create(value));
         return array;
     }
 
-    public static BlankSerializationArray byBooleans(SerializationContext blankSerializationContext, Collection<? extends Boolean> values){
-        BlankSerializationArray array = new BlankSerializationArray(blankSerializationContext);
+    /**
+     * Returns a serialization array consisting of bool values
+     *
+     * @param serializationContext the serialization context
+     * @param values               the values
+     * @return the array
+     */
+    public static BlankSerializationArray byBooleans(SerializationContext serializationContext, Collection<? extends Boolean> values) {
+        BlankSerializationArray array = new BlankSerializationArray(serializationContext);
         for (Boolean value : values)
-            array.add(blankSerializationContext.create(value));
+            array.add(serializationContext.create(value));
         return array;
     }
 
-    public static BlankSerializationArray byStrings(SerializationContext blankSerializationContext, Collection<? extends String> values){
-        BlankSerializationArray array = new BlankSerializationArray(blankSerializationContext);
+    /**
+     * Returns a serialization array consisting of string values
+     *
+     * @param serializationContext the serialization context
+     * @param values               the values
+     * @return the array
+     */
+    public static BlankSerializationArray byStrings(SerializationContext serializationContext, Collection<? extends String> values) {
+        BlankSerializationArray array = new BlankSerializationArray(serializationContext);
         for (String value : values)
-            array.add(blankSerializationContext.create(value));
+            array.add(serializationContext.create(value));
         return array;
     }
 
