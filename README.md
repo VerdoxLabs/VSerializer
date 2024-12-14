@@ -3,10 +3,9 @@ VSerializer is a library used to create context independent Serializers for Java
 Right now it only supports json serialization. However, new serialization contexts can be included easily.
 
 ### Setup ###
-In build.gradle.kts
 ```kotlin
 repositories {
-    maven("https://maven.pkg.github.com/VerdoxLabs/VSerializer")
+    maven("https://repo.verdox.de/snapshots")
 }
 dependencies {
     implementation("de.verdox:vserializer:+") // If you want the latest version use '+'. Else you must specify a version.
