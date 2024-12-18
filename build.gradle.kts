@@ -18,6 +18,7 @@ java {
 dependencies {
     compileOnly("com.google.code.gson:gson:2.11.0")
     compileOnly("org.jetbrains:annotations:26.0.1")
+    compileOnly("com.google.guava:guava:33.3.1-jre")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")

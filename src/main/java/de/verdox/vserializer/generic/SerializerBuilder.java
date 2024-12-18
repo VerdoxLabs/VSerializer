@@ -1,6 +1,6 @@
 package de.verdox.vserializer.generic;
 
-import com.google.gson.reflect.TypeToken;
+import com.google.common.reflect.TypeToken;
 import de.verdox.vserializer.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
