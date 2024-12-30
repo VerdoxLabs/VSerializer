@@ -239,6 +239,29 @@ public class SerializerBuilder<T> {
         return this;
     }
 
+    public <R1, R2, R3, R4, R5, R6, R7> SerializerBuilder<T> constructor(
+            SerializableField<T, R1> field1,
+            SerializableField<T, R2> field2,
+            SerializableField<T, R3> field3,
+            SerializableField<T, R4> field4,
+            SerializableField<T, R5> field5,
+            SerializableField<T, R6> field6,
+            SerializableField<T, R7> field7,
+            Function7<R1, R2, R3, R4, R5, R6, R7, T> constructor) {
+        this.constructorSerializer = new ConstructorSerializer(this.id, serializationElement -> {
+            SerializationContainer container = serializationElement.getAsContainer();
+            R1 r1 = field1.read(container);
+            R2 r2 = field2.read(container);
+            R3 r3 = field3.read(container);
+            R4 r4 = field4.read(container);
+            R5 r5 = field5.read(container);
+            R6 r6 = field6.read(container);
+            R7 r7 = field7.read(container);
+            return constructor.apply(r1, r2, r3, r4, r5, r6, r7);
+        }, field1, field2, field3, field4, field5, field6, field7);
+        return this;
+    }
+
     private class ConstructorSerializer implements Serializer<T> {
         private final String id;
         private final Function<SerializationElement, T> deserializer;
