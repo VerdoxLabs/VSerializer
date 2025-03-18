@@ -3,7 +3,6 @@ package model;
 import de.verdox.vserializer.SerializableField;
 import de.verdox.vserializer.generic.Serializer;
 import de.verdox.vserializer.generic.SerializerBuilder;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -21,7 +20,6 @@ public class Person {
     private String name;
     private int age;
     private final Gender gender;
-    @Nullable
     private Job job;
 
     public Person(String name, int age, Gender gender) {
@@ -50,11 +48,11 @@ public class Person {
         return name;
     }
 
-    public void setJob(@Nullable Job job) {
+    public void setJob(Job job) {
         this.job = job;
     }
 
-    @Nullable
+
     public Job getJob() {
         return job;
     }

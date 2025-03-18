@@ -10,7 +10,9 @@ import de.verdox.vserializer.generic.SerializationNull;
 import de.verdox.vserializer.util.gson.JsonUtil;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 
 public class JsonSerializerContext implements SerializationContext {
     @Override
@@ -88,13 +90,28 @@ public class JsonSerializerContext implements SerializationContext {
 
     @Override
     public void writeToFile(SerializationElement serializationElement, File file) throws IOException {
-        if(serializationElement instanceof JsonSerializationElement jsonSerializationElement && jsonSerializationElement.jsonElement.isJsonObject())
+        if(serializationElement instanceof JsonSerializationElement jsonSerializationElement && jsonSerializationElement.jsonElement.isJsonObject()) {
             JsonUtil.writeJsonObjectToFile(jsonSerializationElement.jsonElement.getAsJsonObject(), file);
+        }
+        else {
+            throw new IllegalArgumentException("The provided serialization element was not created by a json context.");
+        }
     }
 
     @Override
     public SerializationElement readFromFile(File file) throws IOException {
         return toElement(JsonUtil.readJsonFromFile(file));
+    }
+    
+    public String toJsonString(SerializationElement serializationElement) {
+        if(serializationElement instanceof JsonSerializationElement jsonSerializationElement) {
+            return JsonUtil.toJsonString(jsonSerializationElement.jsonElement);
+        }
+        throw new IllegalArgumentException("The provided serialization element was not deserialized by a json context.");
+    }
+    
+    public SerializationElement fromJsonString(String jsonString) {
+        return toElement(JsonUtil.readFromString(jsonString));
     }
 
     public JsonSerializationElement toElement(JsonElement jsonElement) {

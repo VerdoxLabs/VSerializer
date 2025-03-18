@@ -2,6 +2,7 @@ package de.verdox.vserializer.util.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.*;
@@ -20,6 +21,14 @@ public class JsonUtil {
             jsonObject = GSON_INSTANCE.fromJson(reader, JsonObject.class);
         }
         return jsonObject;
+    }
+
+    public static JsonObject readFromString(String json) {
+        return GSON_INSTANCE.fromJson(json, JsonObject.class);
+    }
+
+    public static String toJsonString(JsonElement jsonElement) {
+        return GSON_INSTANCE.toJson(jsonElement);
     }
 
     public static JsonObject readJsonInputStream(InputStream inputStream) throws IOException {

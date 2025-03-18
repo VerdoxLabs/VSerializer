@@ -25,6 +25,7 @@ dependencies {
     testImplementation("org.jetbrains:annotations:26.0.1")
     testImplementation("com.google.code.gson:gson:2.11.0")
     testImplementation("org.ow2.asm:asm-tree:9.7")
+    testImplementation("com.google.guava:guava:33.3.1-jre")
 }
 
 tasks {
@@ -53,7 +54,7 @@ publishing {
             pom {
                 groupId = "de.verdox"
                 artifactId = "vserializer"
-                version = "1.0.5-SNAPSHOT"
+                version = "1.0.7-SNAPSHOT"
                 from(components["java"])
                 url = "https://github.com/VerdoxLabs/VSerializer"
                 licenses {

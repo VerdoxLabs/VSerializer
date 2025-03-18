@@ -5,6 +5,7 @@ import de.verdox.vserializer.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -86,10 +87,9 @@ public class SerializerBuilder<T> {
             public SerializationElement serialize(SerializationContext serializationContext, T object) {
                 SerializationContainer container = constructorSerializer.serialize(serializationContext, object).getAsContainer();
                 fields.forEach((s, serializableField) -> {
-                    try{
+                    try {
                         serializableField.write(container, object);
-                    }
-                    catch (Throwable e){
+                    } catch (Throwable e) {
                         throw new RuntimeException("There was an error in the serializer with the id " + id() + " while serializing the field " + s, e);
                     }
                 });
@@ -99,7 +99,7 @@ public class SerializerBuilder<T> {
             @Override
             public T deserialize(SerializationElement serializedElement) {
                 SerializationContainer container = serializedElement.getAsContainer();
-                T wrapped = constructorSerializer.deserializer.apply(serializedElement);
+                T wrapped = constructorSerializer.deserializer.apply(this, serializedElement);
                 fields.forEach((s, serializableField) -> {
                     try {
                         Object value = serializableField.read(container);
@@ -139,18 +139,40 @@ public class SerializerBuilder<T> {
     }
 
     public SerializerBuilder<T> constructor(Supplier<T> constructor) {
-        this.constructorSerializer = new ConstructorSerializer(this.id, jsonElement -> constructor.get());
+        this.constructorSerializer = new ConstructorSerializer(this.id, (serializer, serializationElement) -> constructor.get());
+        return this;
+    }
+
+    public <R1> SerializerBuilder<T> constructor(
+            SerializableFieldBuilder<T, R1> field1,
+            Function<R1, T> constructor) {
+        this.constructorSerializer = new ConstructorSerializer(this.id, (serializer, serializationElement) -> {
+            SerializationContainer container = serializationElement.getAsContainer();
+            R1 r1 = field1.build(serializer).read(container);
+            return constructor.apply(r1);
+        }, field1);
         return this;
     }
 
     public <R1> SerializerBuilder<T> constructor(
             SerializableField<T, R1> field1,
             Function<R1, T> constructor) {
-        this.constructorSerializer = new ConstructorSerializer(this.id, serializationElement -> {
+        return constructor(
+                s -> field1,
+                constructor
+        );
+    }
+
+    public <R1, R2> SerializerBuilder<T> constructor(
+            SerializableFieldBuilder<T, R1> field1,
+            SerializableFieldBuilder<T, R2> field2,
+            BiFunction<R1, R2, T> constructor) {
+        this.constructorSerializer = new ConstructorSerializer(this.id, (serializer, serializationElement) -> {
             SerializationContainer container = serializationElement.getAsContainer();
-            R1 r1 = field1.read(container);
-            return constructor.apply(r1);
-        }, field1);
+            R1 r1 = field1.build(serializer).read(container);
+            R2 r2 = field2.build(serializer).read(container);
+            return constructor.apply(r1, r2);
+        }, field1, field2);
         return this;
     }
 
@@ -158,12 +180,25 @@ public class SerializerBuilder<T> {
             SerializableField<T, R1> field1,
             SerializableField<T, R2> field2,
             BiFunction<R1, R2, T> constructor) {
-        this.constructorSerializer = new ConstructorSerializer(this.id, serializationElement -> {
+        return constructor(
+                s -> field1,
+                s -> field2,
+                constructor
+        );
+    }
+
+    public <R1, R2, R3> SerializerBuilder<T> constructor(
+            SerializableFieldBuilder<T, R1> field1,
+            SerializableFieldBuilder<T, R2> field2,
+            SerializableFieldBuilder<T, R3> field3,
+            Function3<R1, R2, R3, T> constructor) {
+        this.constructorSerializer = new ConstructorSerializer(this.id, (serializer, serializationElement) -> {
             SerializationContainer container = serializationElement.getAsContainer();
-            R1 r1 = field1.read(container);
-            R2 r2 = field2.read(container);
-            return constructor.apply(r1, r2);
-        }, field1, field2);
+            R1 r1 = field1.build(serializer).read(container);
+            R2 r2 = field2.build(serializer).read(container);
+            R3 r3 = field3.build(serializer).read(container);
+            return constructor.apply(r1, r2, r3);
+        }, field1, field2, field3);
         return this;
     }
 
@@ -172,13 +207,28 @@ public class SerializerBuilder<T> {
             SerializableField<T, R2> field2,
             SerializableField<T, R3> field3,
             Function3<R1, R2, R3, T> constructor) {
-        this.constructorSerializer = new ConstructorSerializer(this.id, serializationElement -> {
+        return constructor(
+                s -> field1,
+                s -> field2,
+                s -> field3,
+                constructor
+        );
+    }
+
+    public <R1, R2, R3, R4> SerializerBuilder<T> constructor(
+            SerializableFieldBuilder<T, R1> field1,
+            SerializableFieldBuilder<T, R2> field2,
+            SerializableFieldBuilder<T, R3> field3,
+            SerializableFieldBuilder<T, R4> field4,
+            Function4<R1, R2, R3, R4, T> constructor) {
+        this.constructorSerializer = new ConstructorSerializer(this.id, (serializer, serializationElement) -> {
             SerializationContainer container = serializationElement.getAsContainer();
-            R1 r1 = field1.read(container);
-            R2 r2 = field2.read(container);
-            R3 r3 = field3.read(container);
-            return constructor.apply(r1, r2, r3);
-        }, field1, field2, field3);
+            R1 r1 = field1.build(serializer).read(container);
+            R2 r2 = field2.build(serializer).read(container);
+            R3 r3 = field3.build(serializer).read(container);
+            R4 r4 = field4.build(serializer).read(container);
+            return constructor.apply(r1, r2, r3, r4);
+        }, field1, field2, field3, field4);
         return this;
     }
 
@@ -188,14 +238,31 @@ public class SerializerBuilder<T> {
             SerializableField<T, R3> field3,
             SerializableField<T, R4> field4,
             Function4<R1, R2, R3, R4, T> constructor) {
-        this.constructorSerializer = new ConstructorSerializer(this.id, serializationElement -> {
+        return constructor(
+                s -> field1,
+                s -> field2,
+                s -> field3,
+                s -> field4,
+                constructor
+        );
+    }
+
+    public <R1, R2, R3, R4, R5> SerializerBuilder<T> constructor(
+            SerializableFieldBuilder<T, R1> field1,
+            SerializableFieldBuilder<T, R2> field2,
+            SerializableFieldBuilder<T, R3> field3,
+            SerializableFieldBuilder<T, R4> field4,
+            SerializableFieldBuilder<T, R5> field5,
+            Function5<R1, R2, R3, R4, R5, T> constructor) {
+        this.constructorSerializer = new ConstructorSerializer(this.id, (serializer, serializationElement) -> {
             SerializationContainer container = serializationElement.getAsContainer();
-            R1 r1 = field1.read(container);
-            R2 r2 = field2.read(container);
-            R3 r3 = field3.read(container);
-            R4 r4 = field4.read(container);
-            return constructor.apply(r1, r2, r3, r4);
-        }, field1, field2, field3, field4);
+            R1 r1 = field1.build(serializer).read(container);
+            R2 r2 = field2.build(serializer).read(container);
+            R3 r3 = field3.build(serializer).read(container);
+            R4 r4 = field4.build(serializer).read(container);
+            R5 r5 = field5.build(serializer).read(container);
+            return constructor.apply(r1, r2, r3, r4, r5);
+        }, field1, field2, field3, field4, field5);
         return this;
     }
 
@@ -206,15 +273,34 @@ public class SerializerBuilder<T> {
             SerializableField<T, R4> field4,
             SerializableField<T, R5> field5,
             Function5<R1, R2, R3, R4, R5, T> constructor) {
-        this.constructorSerializer = new ConstructorSerializer(this.id, serializationElement -> {
+        return constructor(
+                s -> field1,
+                s -> field2,
+                s -> field3,
+                s -> field4,
+                s -> field5,
+                constructor
+        );
+    }
+
+    public <R1, R2, R3, R4, R5, R6> SerializerBuilder<T> constructor(
+            SerializableFieldBuilder<T, R1> field1,
+            SerializableFieldBuilder<T, R2> field2,
+            SerializableFieldBuilder<T, R3> field3,
+            SerializableFieldBuilder<T, R4> field4,
+            SerializableFieldBuilder<T, R5> field5,
+            SerializableFieldBuilder<T, R6> field6,
+            Function6<R1, R2, R3, R4, R5, R6, T> constructor) {
+        this.constructorSerializer = new ConstructorSerializer(this.id, (serializer, serializationElement) -> {
             SerializationContainer container = serializationElement.getAsContainer();
-            R1 r1 = field1.read(container);
-            R2 r2 = field2.read(container);
-            R3 r3 = field3.read(container);
-            R4 r4 = field4.read(container);
-            R5 r5 = field5.read(container);
-            return constructor.apply(r1, r2, r3, r4, r5);
-        }, field1, field2, field3, field4, field5);
+            R1 r1 = field1.build(serializer).read(container);
+            R2 r2 = field2.build(serializer).read(container);
+            R3 r3 = field3.build(serializer).read(container);
+            R4 r4 = field4.build(serializer).read(container);
+            R5 r5 = field5.build(serializer).read(container);
+            R6 r6 = field6.build(serializer).read(container);
+            return constructor.apply(r1, r2, r3, r4, r5, r6);
+        }, field1, field2, field3, field4, field5, field6);
         return this;
     }
 
@@ -226,16 +312,37 @@ public class SerializerBuilder<T> {
             SerializableField<T, R5> field5,
             SerializableField<T, R6> field6,
             Function6<R1, R2, R3, R4, R5, R6, T> constructor) {
-        this.constructorSerializer = new ConstructorSerializer(this.id, serializationElement -> {
+        return constructor(
+                s -> field1,
+                s -> field2,
+                s -> field3,
+                s -> field4,
+                s -> field5,
+                s -> field6,
+                constructor
+        );
+    }
+
+    public <R1, R2, R3, R4, R5, R6, R7> SerializerBuilder<T> constructor(
+            SerializableFieldBuilder<T, R1> field1,
+            SerializableFieldBuilder<T, R2> field2,
+            SerializableFieldBuilder<T, R3> field3,
+            SerializableFieldBuilder<T, R4> field4,
+            SerializableFieldBuilder<T, R5> field5,
+            SerializableFieldBuilder<T, R6> field6,
+            SerializableFieldBuilder<T, R7> field7,
+            Function7<R1, R2, R3, R4, R5, R6, R7, T> constructor) {
+        this.constructorSerializer = new ConstructorSerializer(this.id, (serializer, serializationElement) -> {
             SerializationContainer container = serializationElement.getAsContainer();
-            R1 r1 = field1.read(container);
-            R2 r2 = field2.read(container);
-            R3 r3 = field3.read(container);
-            R4 r4 = field4.read(container);
-            R5 r5 = field5.read(container);
-            R6 r6 = field6.read(container);
-            return constructor.apply(r1, r2, r3, r4, r5, r6);
-        }, field1, field2, field3, field4, field5, field6);
+            R1 r1 = field1.build(serializer).read(container);
+            R2 r2 = field2.build(serializer).read(container);
+            R3 r3 = field3.build(serializer).read(container);
+            R4 r4 = field4.build(serializer).read(container);
+            R5 r5 = field5.build(serializer).read(container);
+            R6 r6 = field6.build(serializer).read(container);
+            R7 r7 = field7.build(serializer).read(container);
+            return constructor.apply(r1, r2, r3, r4, r5, r6, r7);
+        }, field1, field2, field3, field4, field5, field6, field7);
         return this;
     }
 
@@ -248,30 +355,28 @@ public class SerializerBuilder<T> {
             SerializableField<T, R6> field6,
             SerializableField<T, R7> field7,
             Function7<R1, R2, R3, R4, R5, R6, R7, T> constructor) {
-        this.constructorSerializer = new ConstructorSerializer(this.id, serializationElement -> {
-            SerializationContainer container = serializationElement.getAsContainer();
-            R1 r1 = field1.read(container);
-            R2 r2 = field2.read(container);
-            R3 r3 = field3.read(container);
-            R4 r4 = field4.read(container);
-            R5 r5 = field5.read(container);
-            R6 r6 = field6.read(container);
-            R7 r7 = field7.read(container);
-            return constructor.apply(r1, r2, r3, r4, r5, r6, r7);
-        }, field1, field2, field3, field4, field5, field6, field7);
-        return this;
+        return constructor(
+                s -> field1,
+                s -> field2,
+                s -> field3,
+                s -> field4,
+                s -> field5,
+                s -> field6,
+                s -> field7,
+                constructor
+        );
     }
 
     private class ConstructorSerializer implements Serializer<T> {
         private final String id;
-        private final Function<SerializationElement, T> deserializer;
+        private final BiFunction<Serializer<T>, SerializationElement, T> deserializer;
         private final SerializableField<T, ?>[] fields;
 
         @SafeVarargs
-        private ConstructorSerializer(String id, Function<SerializationElement, T> deserializer, SerializableField<T, ?>... fields) {
+        private ConstructorSerializer(String id, BiFunction<Serializer<T>, SerializationElement, T> deserializer, SerializableFieldBuilder<T, ?>... fields) {
             this.id = id;
             this.deserializer = deserializer;
-            this.fields = fields;
+            this.fields = Arrays.stream(fields).map(tSerializableFieldBuilder -> tSerializableFieldBuilder.build(this)).toArray(SerializableField[]::new);
         }
 
         public SerializableField<T, ?>[] getFields() {
@@ -289,7 +394,7 @@ public class SerializerBuilder<T> {
         @Override
         public T deserialize(SerializationElement serializedElement) {
             try {
-                return deserializer.apply(serializedElement);
+                return deserializer.apply(this, serializedElement);
             } catch (Throwable e) {
                 throw new RuntimeException("There was an error deserializing " + id, e);
             }
