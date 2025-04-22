@@ -70,6 +70,10 @@ public interface Serializer<T> {
         return false;
     }
 
+    default T defaultValue() {
+        return null;
+    }
+
     class UUID implements Serializer<java.util.UUID> {
         public static final UUID INSTANCE = new UUID();
 
@@ -140,25 +144,27 @@ public interface Serializer<T> {
     }
 
     class Primitive<T> implements Serializer<T> {
-        public static final Primitive<Boolean> BOOLEAN = new Primitive<>(SerializationContext::create, SerializationElement::getAsBoolean, Boolean.class);
-        public static final Primitive<String> STRING = new Primitive<>(SerializationContext::create, SerializationElement::getAsString, String.class);
-        public static final Primitive<Character> CHARACTER = new Primitive<>(SerializationContext::create, SerializationElement::getAsCharacter, Character.class);
-        public static final Primitive<Number> NUMBER = new Primitive<>(SerializationContext::create, SerializationElement::getAsNumber, Number.class);
-        public static final Primitive<Double> DOUBLE = new Primitive<>(SerializationContext::create, SerializationElement::getAsDouble, Double.class);
-        public static final Primitive<Float> FLOAT = new Primitive<>(SerializationContext::create, SerializationElement::getAsFloat, Float.class);
-        public static final Primitive<Long> LONG = new Primitive<>(SerializationContext::create, SerializationElement::getAsLong, Long.class);
-        public static final Primitive<Integer> INTEGER = new Primitive<>(SerializationContext::create, SerializationElement::getAsInt, Integer.class);
-        public static final Primitive<Short> SHORT = new Primitive<>(SerializationContext::create, SerializationElement::getAsShort, Short.class);
-        public static final Primitive<Byte> BYTE = new Primitive<>(SerializationContext::create, SerializationElement::getAsByte, Byte.class);
+        public static final Primitive<Boolean> BOOLEAN = new Primitive<>(SerializationContext::create, SerializationElement::getAsBoolean, Boolean.class, false);
+        public static final Primitive<String> STRING = new Primitive<>(SerializationContext::create, SerializationElement::getAsString, String.class, "");
+        public static final Primitive<Character> CHARACTER = new Primitive<>(SerializationContext::create, SerializationElement::getAsCharacter, Character.class, (char) 0);
+        public static final Primitive<Number> NUMBER = new Primitive<>(SerializationContext::create, SerializationElement::getAsNumber, Number.class, 0);
+        public static final Primitive<Double> DOUBLE = new Primitive<>(SerializationContext::create, SerializationElement::getAsDouble, Double.class, 0d);
+        public static final Primitive<Float> FLOAT = new Primitive<>(SerializationContext::create, SerializationElement::getAsFloat, Float.class, 0f);
+        public static final Primitive<Long> LONG = new Primitive<>(SerializationContext::create, SerializationElement::getAsLong, Long.class, 0L);
+        public static final Primitive<Integer> INTEGER = new Primitive<>(SerializationContext::create, SerializationElement::getAsInt, Integer.class, 0);
+        public static final Primitive<Short> SHORT = new Primitive<>(SerializationContext::create, SerializationElement::getAsShort, Short.class, (short) 0);
+        public static final Primitive<Byte> BYTE = new Primitive<>(SerializationContext::create, SerializationElement::getAsByte, Byte.class, (byte) 0);
 
         private final BiFunction<SerializationContext, T, SerializationPrimitive> to;
         private final Function<SerializationElement, T> from;
         private final Class<? extends T> type;
+        private final T defaultValue;
 
-        private Primitive(BiFunction<SerializationContext, T, SerializationPrimitive> to, Function<SerializationElement, T> from, Class<? extends T> type) {
+        private Primitive(BiFunction<SerializationContext, T, SerializationPrimitive> to, Function<SerializationElement, T> from, Class<? extends T> type, T defaultValue) {
             this.to = to;
             this.from = from;
             this.type = type;
+            this.defaultValue = defaultValue;
         }
 
         @Override
@@ -168,7 +174,11 @@ public interface Serializer<T> {
 
         @Override
         public T deserialize(SerializationElement serializedElement) {
-            return from.apply(serializedElement);
+            var value = from.apply(serializedElement);
+            if (value == null) {
+                return defaultValue;
+            }
+            return value;
         }
 
         @Override
@@ -179,6 +189,11 @@ public interface Serializer<T> {
         @Override
         public Class<? extends T> getType() {
             return type;
+        }
+
+        @Override
+        public T defaultValue() {
+            return defaultValue;
         }
     }
 
@@ -495,7 +510,7 @@ public interface Serializer<T> {
             if (!variants.containsKey(type))
                 throw new IllegalArgumentException("The type " + type + " is not known in this Selection Serializer");
             if (!container.contains(type))
-                throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element "+container);
+                throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element " + container);
             return variants.get(type).deserialize(container.get(type));
         }
     }
@@ -512,6 +527,7 @@ public interface Serializer<T> {
         public static <T> Selection<T> create(String id, Class<? extends T> type) {
             return new Selection<>(id, type);
         }
+
         private String standardVariantID;
         private Selection.Variant<T> standardVariant;
 
@@ -521,7 +537,7 @@ public interface Serializer<T> {
 
         public <R extends T> Selection<T> variant(String id, Serializer<R> variantSerializer, R variantObject) {
             Selection.Variant<T> variant = (Selection.Variant<T>) new Selection.Variant<>(variantSerializer, variantObject);
-            if (standardVariantID != null && standardVariant == null){
+            if (standardVariantID != null && standardVariant == null) {
                 standardVariantID = id;
                 standardVariant = variant;
             }
@@ -579,7 +595,7 @@ public interface Serializer<T> {
 
             Variant<?> variant = variants.get(type);
             if (!container.contains(type) && variant.variant != null)
-                throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element "+container);
+                throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element " + container);
             return variants.get(type).serializer().deserialize(container.get(type));
         }
 
