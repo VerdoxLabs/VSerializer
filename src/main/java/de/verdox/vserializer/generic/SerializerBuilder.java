@@ -74,7 +74,7 @@ public class SerializerBuilder<T> {
         };
     }
 
-    private final Map<String, SerializableField<T, ?>> fields = new HashMap<>();
+    private final Map<String, AbstractSerializableField<T, ?>> fields = new HashMap<>();
     private ConstructorSerializer<T> constructorSerializer;
 
     private SerializerBuilder(String id, Class<T> type) {
@@ -83,7 +83,17 @@ public class SerializerBuilder<T> {
     }
 
     public <R> SerializerBuilder<T> withField(String name, Serializer<R> serializer, @NotNull Function<T, R> getter, @NotNull BiConsumer<T, R> setter) {
-        fields.put(name, new SerializableField<>(name, serializer, getter, setter));
+        fields.put(name, SerializableField.create(name, serializer, getter, setter));
+        return this;
+    }
+
+    public <R> SerializerBuilder<T> withFinalField(String name, Serializer<R> serializer, @NotNull Function<T, R> getter) {
+        fields.put(name, SerializableField.finalField(name, serializer, getter));
+        return this;
+    }
+
+    public <R> SerializerBuilder<T> withBuilderField(String name, Serializer<R> serializer, @NotNull Function<T, R> getter, BiFunction<T, R, T> setter) {
+        fields.put(name, SerializableField.builderField(name, serializer, getter, setter));
         return this;
     }
 
@@ -118,9 +128,9 @@ public class SerializerBuilder<T> {
                 Objects.requireNonNull(constructorSerializer.deserializer, "The serializer has no deserialization function");
                 T wrapped = constructorSerializer.deserializer.apply(this, serializedElement);
 
-                for (java.util.Map.Entry<String, SerializableField<T, ?>> stringSerializableFieldEntry : fields.entrySet()) {
+                for (java.util.Map.Entry<String, AbstractSerializableField<T, ?>> stringSerializableFieldEntry : fields.entrySet()) {
                     String fieldId = stringSerializableFieldEntry.getKey();
-                    SerializableField<T, ?> serializableField = stringSerializableFieldEntry.getValue();
+                    AbstractSerializableField<T, ?> serializableField = stringSerializableFieldEntry.getValue();
                     try {
                         wrapped = serializableField.readAndSet(wrapped, container);
                     } catch (Throwable e) {
