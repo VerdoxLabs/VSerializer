@@ -54,7 +54,7 @@ publishing {
             pom {
                 groupId = "de.verdox"
                 artifactId = "vserializer"
-                version = "1.2.1-SNAPSHOT"
+                version = "1.2.2-SNAPSHOT"
                 from(components["java"])
                 url = "https://github.com/VerdoxLabs/VSerializer"
                 licenses {

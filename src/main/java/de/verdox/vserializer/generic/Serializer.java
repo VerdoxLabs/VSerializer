@@ -102,6 +102,44 @@ public interface Serializer<T> {
         }
     }
 
+    class Optional<T> implements Serializer<java.util.Optional<T>> {
+        private final Serializer<T> elementSerializer;
+
+        public static <E> Optional<E> create(@NotNull Serializer<E> serializer) {
+            return new Optional<>(serializer);
+        }
+
+        private Optional(Serializer<T> elementSerializer) {
+            this.elementSerializer = elementSerializer;
+        }
+
+        @Override
+        public SerializationElement serialize(SerializationContext serializationContext, java.util.Optional<T> object) {
+            if (object.isPresent()) {
+                return elementSerializer.serialize(serializationContext, object.get());
+            }
+            return serializationContext.createNull();
+        }
+
+        @Override
+        public java.util.Optional<T> deserialize(SerializationElement serializedElement) {
+            if (serializedElement.isNull()) {
+                return java.util.Optional.empty();
+            }
+            return java.util.Optional.ofNullable(elementSerializer.deserialize(serializedElement));
+        }
+
+        @Override
+        public String id() {
+            return "optional";
+        }
+
+        @Override
+        public Class<? extends java.util.Optional<T>> getType() {
+            return (Class<? extends java.util.Optional<T>>) java.util.Optional.class;
+        }
+    }
+
     class Null<T> implements Serializer<T> {
         private final Class<? extends T> type;
 
