@@ -185,7 +185,7 @@ public class SerializerBuilder<T> {
     }
 
     public <R1> SerializerBuilder<T> constructor(
-            SerializableField<T, R1> field1,
+            AbstractSerializableField<T, R1> field1,
             Function<R1, T> constructor
     ) {
         return constructor(
@@ -203,7 +203,7 @@ public class SerializerBuilder<T> {
 
     public <R1> SerializerBuilder<T> constructor(
             Function<R1, T> constructor,
-            SerializableField<T, R1> field1
+            AbstractSerializableField<T, R1> field1
     ) {
         return constructor(
                 s -> field1,
@@ -228,8 +228,8 @@ public class SerializerBuilder<T> {
     }
 
     public <R1, R2> SerializerBuilder<T> constructor(
-            SerializableField<T, R1> field1,
-            SerializableField<T, R2> field2,
+            AbstractSerializableField<T, R1> field1,
+            AbstractSerializableField<T, R2> field2,
             BiFunction<R1, R2, T> constructor
     ) {
         return constructor(
@@ -249,8 +249,8 @@ public class SerializerBuilder<T> {
 
     public <R1, R2> SerializerBuilder<T> constructor(
             BiFunction<R1, R2, T> constructor,
-            SerializableField<T, R1> field1,
-            SerializableField<T, R2> field2
+            AbstractSerializableField<T, R1> field1,
+            AbstractSerializableField<T, R2> field2
     ) {
         return constructor(
                 s -> field1,
@@ -287,9 +287,9 @@ public class SerializerBuilder<T> {
     }
 
     public <R1, R2, R3> SerializerBuilder<T> constructor(
-            SerializableField<T, R1> field1,
-            SerializableField<T, R2> field2,
-            SerializableField<T, R3> field3,
+            AbstractSerializableField<T, R1> field1,
+            AbstractSerializableField<T, R2> field2,
+            AbstractSerializableField<T, R3> field3,
             Function3<R1, R2, R3, T> constructor) {
         return constructor(
                 s -> field1,
@@ -301,9 +301,9 @@ public class SerializerBuilder<T> {
 
     public <R1, R2, R3> SerializerBuilder<T> constructor(
             Function3<R1, R2, R3, T> constructor,
-            SerializableField<T, R1> field1,
-            SerializableField<T, R2> field2,
-            SerializableField<T, R3> field3
+            AbstractSerializableField<T, R1> field1,
+            AbstractSerializableField<T, R2> field2,
+            AbstractSerializableField<T, R3> field3
     ) {
         return constructor(
                 s -> field1,
@@ -334,10 +334,10 @@ public class SerializerBuilder<T> {
     }
 
     public <R1, R2, R3, R4> SerializerBuilder<T> constructor(
-            SerializableField<T, R1> field1,
-            SerializableField<T, R2> field2,
-            SerializableField<T, R3> field3,
-            SerializableField<T, R4> field4,
+            AbstractSerializableField<T, R1> field1,
+            AbstractSerializableField<T, R2> field2,
+            AbstractSerializableField<T, R3> field3,
+            AbstractSerializableField<T, R4> field4,
             Function4<R1, R2, R3, R4, T> constructor
     ) {
         return constructor(
@@ -361,10 +361,10 @@ public class SerializerBuilder<T> {
 
     public <R1, R2, R3, R4> SerializerBuilder<T> constructor(
             Function4<R1, R2, R3, R4, T> constructor,
-            SerializableField<T, R1> field1,
-            SerializableField<T, R2> field2,
-            SerializableField<T, R3> field3,
-            SerializableField<T, R4> field4
+            AbstractSerializableField<T, R1> field1,
+            AbstractSerializableField<T, R2> field2,
+            AbstractSerializableField<T, R3> field3,
+            AbstractSerializableField<T, R4> field4
     ) {
         return constructor(
                 s -> field1,
@@ -397,11 +397,11 @@ public class SerializerBuilder<T> {
     }
 
     public <R1, R2, R3, R4, R5> SerializerBuilder<T> constructor(
-            SerializableField<T, R1> field1,
-            SerializableField<T, R2> field2,
-            SerializableField<T, R3> field3,
-            SerializableField<T, R4> field4,
-            SerializableField<T, R5> field5,
+            AbstractSerializableField<T, R1> field1,
+            AbstractSerializableField<T, R2> field2,
+            AbstractSerializableField<T, R3> field3,
+            AbstractSerializableField<T, R4> field4,
+            AbstractSerializableField<T, R5> field5,
             Function5<R1, R2, R3, R4, R5, T> constructor
     ) {
         return constructor(
@@ -427,11 +427,11 @@ public class SerializerBuilder<T> {
 
     public <R1, R2, R3, R4, R5> SerializerBuilder<T> constructor(
             Function5<R1, R2, R3, R4, R5, T> constructor,
-            SerializableField<T, R1> field1,
-            SerializableField<T, R2> field2,
-            SerializableField<T, R3> field3,
-            SerializableField<T, R4> field4,
-            SerializableField<T, R5> field5
+            AbstractSerializableField<T, R1> field1,
+            AbstractSerializableField<T, R2> field2,
+            AbstractSerializableField<T, R3> field3,
+            AbstractSerializableField<T, R4> field4,
+            AbstractSerializableField<T, R5> field5
     ) {
         return constructor(
                 s -> field1,
@@ -467,12 +467,12 @@ public class SerializerBuilder<T> {
     }
 
     public <R1, R2, R3, R4, R5, R6> SerializerBuilder<T> constructor(
-            SerializableField<T, R1> field1,
-            SerializableField<T, R2> field2,
-            SerializableField<T, R3> field3,
-            SerializableField<T, R4> field4,
-            SerializableField<T, R5> field5,
-            SerializableField<T, R6> field6,
+            AbstractSerializableField<T, R1> field1,
+            AbstractSerializableField<T, R2> field2,
+            AbstractSerializableField<T, R3> field3,
+            AbstractSerializableField<T, R4> field4,
+            AbstractSerializableField<T, R5> field5,
+            AbstractSerializableField<T, R6> field6,
             Function6<R1, R2, R3, R4, R5, R6, T> constructor
     ) {
         return constructor(
@@ -500,12 +500,12 @@ public class SerializerBuilder<T> {
 
     public <R1, R2, R3, R4, R5, R6> SerializerBuilder<T> constructor(
             Function6<R1, R2, R3, R4, R5, R6, T> constructor,
-            SerializableField<T, R1> field1,
-            SerializableField<T, R2> field2,
-            SerializableField<T, R3> field3,
-            SerializableField<T, R4> field4,
-            SerializableField<T, R5> field5,
-            SerializableField<T, R6> field6
+            AbstractSerializableField<T, R1> field1,
+            AbstractSerializableField<T, R2> field2,
+            AbstractSerializableField<T, R3> field3,
+            AbstractSerializableField<T, R4> field4,
+            AbstractSerializableField<T, R5> field5,
+            AbstractSerializableField<T, R6> field6
     ) {
         return constructor(
                 s -> field1,
@@ -544,13 +544,13 @@ public class SerializerBuilder<T> {
     }
 
     public <R1, R2, R3, R4, R5, R6, R7> SerializerBuilder<T> constructor(
-            SerializableField<T, R1> field1,
-            SerializableField<T, R2> field2,
-            SerializableField<T, R3> field3,
-            SerializableField<T, R4> field4,
-            SerializableField<T, R5> field5,
-            SerializableField<T, R6> field6,
-            SerializableField<T, R7> field7,
+            AbstractSerializableField<T, R1> field1,
+            AbstractSerializableField<T, R2> field2,
+            AbstractSerializableField<T, R3> field3,
+            AbstractSerializableField<T, R4> field4,
+            AbstractSerializableField<T, R5> field5,
+            AbstractSerializableField<T, R6> field6,
+            AbstractSerializableField<T, R7> field7,
             Function7<R1, R2, R3, R4, R5, R6, R7, T> constructor
     ) {
         return constructor(
@@ -580,13 +580,13 @@ public class SerializerBuilder<T> {
 
     public <R1, R2, R3, R4, R5, R6, R7> SerializerBuilder<T> constructor(
             Function7<R1, R2, R3, R4, R5, R6, R7, T> constructor,
-            SerializableField<T, R1> field1,
-            SerializableField<T, R2> field2,
-            SerializableField<T, R3> field3,
-            SerializableField<T, R4> field4,
-            SerializableField<T, R5> field5,
-            SerializableField<T, R6> field6,
-            SerializableField<T, R7> field7
+            AbstractSerializableField<T, R1> field1,
+            AbstractSerializableField<T, R2> field2,
+            AbstractSerializableField<T, R3> field3,
+            AbstractSerializableField<T, R4> field4,
+            AbstractSerializableField<T, R5> field5,
+            AbstractSerializableField<T, R6> field6,
+            AbstractSerializableField<T, R7> field7
     ) {
         return constructor(
                 s -> field1,

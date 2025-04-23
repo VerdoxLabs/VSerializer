@@ -1,7 +1,7 @@
 package de.verdox.vserializer.generic;
 
-import de.verdox.vserializer.SerializableField;
+import de.verdox.vserializer.AbstractSerializableField;
 
 public interface SerializableFieldBuilder<T, S> {
-    SerializableField<T, S> build(Serializer<T> serializer);
+    AbstractSerializableField<T, S> build(Serializer<T> serializer);
 }
