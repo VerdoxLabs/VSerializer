@@ -1,5 +1,7 @@
 package de.verdox.vserializer.generic;
 
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 import de.verdox.vserializer.SerializableField;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,13 +106,19 @@ public interface Serializer<T> {
 
     class Optional<T> implements Serializer<java.util.Optional<T>> {
         private final Serializer<T> elementSerializer;
+        private final TypeToken<java.util.Optional<T>> token;
 
         public static <E> Optional<E> create(@NotNull Serializer<E> serializer) {
-            return new Optional<>(serializer);
+            TypeToken<E> typeTokenT = TypeToken.of((Class<E>) serializer.getType());
+            TypeToken<java.util.Optional<E>> optionalTypeToken = new TypeToken<java.util.Optional<E>>() {}
+                    .where(new TypeParameter<>(){}, typeTokenT);
+
+            return new Optional<>(serializer, optionalTypeToken);
         }
 
-        private Optional(Serializer<T> elementSerializer) {
+        private Optional(Serializer<T> elementSerializer, TypeToken<java.util.Optional<T>> type) {
             this.elementSerializer = elementSerializer;
+            this.token = type;
         }
 
         @Override
@@ -136,7 +144,7 @@ public interface Serializer<T> {
 
         @Override
         public Class<? extends java.util.Optional<T>> getType() {
-            return (Class<? extends java.util.Optional<T>>) java.util.Optional.class;
+            return (Class<? extends java.util.Optional<T>>) token.getRawType();
         }
     }
 
