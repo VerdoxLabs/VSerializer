@@ -88,6 +88,83 @@ public interface SerializationContext {
     SerializationPrimitive create(double value);
 
     /**
+     * Creates context specific element for a primitive array
+     */
+    default SerializationArray create(boolean[] array) {
+        SerializationArray serializationArray = createArray();
+        for (boolean value : array) {
+            serializationArray.add(create(value));
+        }
+        return serializationArray;
+    }
+
+    /**
+     * Creates context specific element for a primitive array
+     */
+    default SerializationArray create(byte[] array) {
+        SerializationArray serializationArray = createArray();
+        for (byte value : array) {
+            serializationArray.add(create(value));
+        }
+        return serializationArray;
+    }
+
+    /**
+     * Creates context specific element for a primitive array
+     */
+    default SerializationArray create(short[] array) {
+        SerializationArray serializationArray = createArray();
+        for (short value : array) {
+            serializationArray.add(create(value));
+        }
+        return serializationArray;
+    }
+
+    /**
+     * Creates context specific element for a primitive array
+     */
+    default SerializationArray create(int[] array) {
+        SerializationArray serializationArray = createArray();
+        for (int value : array) {
+            serializationArray.add(create(value));
+        }
+        return serializationArray;
+    }
+
+    /**
+     * Creates context specific element for a primitive array
+     */
+    default SerializationArray create(long[] array) {
+        SerializationArray serializationArray = createArray();
+        for (long value : array) {
+            serializationArray.add(create(value));
+        }
+        return serializationArray;
+    }
+
+    /**
+     * Creates context specific element for a primitive array
+     */
+    default SerializationArray create(float[] array) {
+        SerializationArray serializationArray = createArray();
+        for (float value : array) {
+            serializationArray.add(create(value));
+        }
+        return serializationArray;
+    }
+
+    /**
+     * Creates context specific element for a primitive array
+     */
+    default SerializationArray create(double[] array) {
+        SerializationArray serializationArray = createArray();
+        for (double value : array) {
+            serializationArray.add(create(value));
+        }
+        return serializationArray;
+    }
+
+    /**
      * Creates a context specific array
      *
      * @param length the length of the array
