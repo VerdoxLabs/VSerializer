@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class SerializableField<T, R> extends AbstractSerializableField<T, R> {
 
     /**
-     * Used to for immutable fields
+     * Used for immutable fields
      * @param fieldName the field name
      * @param serializer the field type serializer
      * @param getter the getter
@@ -31,7 +31,7 @@ public class SerializableField<T, R> extends AbstractSerializableField<T, R> {
     }
 
     /**
-     * Used to for mutable fields
+     * Used for mutable fields
      * @param fieldName the field name
      * @param serializer the field type serializer
      * @param getter the getter
