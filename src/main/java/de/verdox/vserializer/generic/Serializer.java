@@ -3,6 +3,7 @@ package de.verdox.vserializer.generic;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 import de.verdox.vserializer.SerializableField;
+import de.verdox.vserializer.generic.primitive.PrimitiveArraySerializers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -111,7 +112,7 @@ public interface Serializer<T> {
         public static <E> Optional<E> create(@NotNull Serializer<E> serializer) {
             TypeToken<E> typeTokenT = TypeToken.of((Class<E>) serializer.getType());
             TypeToken<java.util.Optional<E>> optionalTypeToken = new TypeToken<java.util.Optional<E>>() {}
-                    .where(new TypeParameter<>(){}, typeTokenT);
+                    .where(new TypeParameter<>() {}, typeTokenT);
 
             return new Optional<>(serializer, optionalTypeToken);
         }
@@ -201,6 +202,15 @@ public interface Serializer<T> {
         public static final Primitive<Short> SHORT = new Primitive<>(SerializationContext::create, SerializationElement::getAsShort, Short.class, (short) 0);
         public static final Primitive<Byte> BYTE = new Primitive<>(SerializationContext::create, SerializationElement::getAsByte, Byte.class, (byte) 0);
 
+        public static final Serializer<boolean[]> BOOLEAN_ARRAY = new PrimitiveArraySerializers.BoolArray();
+        public static final Serializer<byte[]> BYTE_ARRAY = new PrimitiveArraySerializers.ByteArray();
+        public static final Serializer<short[]> SHORT_ARRAY = new PrimitiveArraySerializers.ShortArray();
+        public static final Serializer<int[]> INT_ARRAY = new PrimitiveArraySerializers.IntArray();
+        public static final Serializer<long[]> LONG_ARRAY = new PrimitiveArraySerializers.LongArray();
+        public static final Serializer<float[]> FLOAT_ARRAY = new PrimitiveArraySerializers.FloatArray();
+        public static final Serializer<double[]> DOUBLE_ARRAY = new PrimitiveArraySerializers.DoubleArray();
+        public static final Serializer<char[]> CHAR_ARRAY = new PrimitiveArraySerializers.CharArray();
+        
         private final BiFunction<SerializationContext, T, SerializationPrimitive> to;
         private final Function<SerializationElement, T> from;
         private final Class<? extends T> type;
