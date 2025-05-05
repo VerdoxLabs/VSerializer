@@ -99,15 +99,15 @@ public class SerializerBuilder<T> {
 
     public Serializer<T> build() {
         final String id = this.id;
-        if (this.constructorSerializer == null)
-            throw new IllegalStateException("No constructor specified for json serializer");
 
         return new Serializer<>() {
             @Override
             public SerializationElement serialize(SerializationContext serializationContext, T object) {
-                Objects.requireNonNull(constructorSerializer, "The serializer was not built correctly. Cannot proceed");
-                Objects.requireNonNull(fields, "The serializer was not built correctly. Cannot proceed");
-                SerializationContainer container = constructorSerializer.serialize(serializationContext, object).getAsContainer();
+                if (constructorSerializer == null && fields.isEmpty()) {
+                    throw new IllegalStateException("Neither a constructor nor fields were defined for this serializer");
+                }
+
+                SerializationContainer container = constructorSerializer != null ? constructorSerializer.serialize(serializationContext, object).getAsContainer() : serializationContext.createContainer();
                 fields.forEach((s, serializableField) -> {
                     try {
                         serializableField.write(container, object);
@@ -124,8 +124,8 @@ public class SerializerBuilder<T> {
                     return null;
                 }
                 SerializationContainer container = serializedElement.getAsContainer();
-                Objects.requireNonNull(constructorSerializer, "The serializer was not built correctly. Cannot proceed");
-                Objects.requireNonNull(constructorSerializer.deserializer, "The serializer has no deserialization function");
+                Objects.requireNonNull(constructorSerializer, "Cannot deserialize an object when no constructor was defined");
+                Objects.requireNonNull(constructorSerializer.deserializer, "The constructor serializer has no deserialization function");
                 T wrapped = constructorSerializer.deserializer.apply(this, serializedElement);
 
                 for (java.util.Map.Entry<String, AbstractSerializableField<T, ?>> stringSerializableFieldEntry : fields.entrySet()) {
@@ -143,8 +143,10 @@ public class SerializerBuilder<T> {
             @Override
             public void updateLiveObjectFromJson(@Nullable T existingObject, SerializationElement serializedElement) {
                 SerializationContainer container = serializedElement.getAsContainer();
-                for (SerializableField<T, ?> field : constructorSerializer.getFields()) {
-                    field.readAndSet(existingObject, container);
+                if(constructorSerializer != null) {
+                    for (SerializableField<T, ?> field : constructorSerializer.getFields()) {
+                        field.readAndSet(existingObject, container);
+                    }
                 }
                 fields.forEach((s, serializableField) -> {
                     serializableField.readAndSet(existingObject, container);
