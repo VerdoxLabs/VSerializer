@@ -1,5 +1,6 @@
 package util;
 
+import de.verdox.vserializer.exception.SerializationException;
 import de.verdox.vserializer.generic.SerializationContext;
 import de.verdox.vserializer.generic.Serializer;
 import model.Gender;
@@ -35,24 +36,24 @@ public class TestInputs {
     public record TestInput<T>(Serializer<T> serializer, T singleInput, Collection<T> collectionInput,
                                 Map<String, T> mapInput, IntFunction<? extends T[]> arrayCreator, T... arrayInput) {
 
-        public void runPrimitiveTest(SerializationContext context) {
+        public void runPrimitiveTest(SerializationContext context) throws SerializationException {
             if (serializer instanceof Serializer.Primitive<T> primitive)
                 TestUtil.testPrimitiveSerialization(context, primitive, singleInput);
         }
 
-        public void runSerializerTest(SerializationContext context) {
+        public void runSerializerTest(SerializationContext context) throws SerializationException  {
             TestUtil.testSerialization(context, serializer, singleInput);
         }
 
-        public void runArrayTest(SerializationContext context) {
+        public void runArrayTest(SerializationContext context) throws SerializationException  {
             TestUtil.testArraySerialization(context, serializer, arrayInput, arrayCreator);
         }
 
-        public void runCollectionTest(SerializationContext context) {
+        public void runCollectionTest(SerializationContext context) throws SerializationException  {
             TestUtil.testCollectionSerialization(context, serializer, collectionInput, ArrayList::new);
         }
 
-        public void runMapTest(SerializationContext context) {
+        public void runMapTest(SerializationContext context) throws SerializationException  {
             TestUtil.testMapSerialization(context, Serializer.Primitive.STRING, serializer, mapInput, HashMap::new);
         }
     }

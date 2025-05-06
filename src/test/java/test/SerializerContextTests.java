@@ -1,6 +1,7 @@
 package test;
 
 import de.verdox.vserializer.SerializableField;
+import de.verdox.vserializer.exception.SerializationException;
 import de.verdox.vserializer.generic.SerializationArray;
 import de.verdox.vserializer.generic.SerializationContainer;
 import de.verdox.vserializer.generic.SerializationElement;
@@ -19,7 +20,7 @@ public abstract class SerializerContextTests extends ContextBasedTest {
     }
 
     @Test
-    public void testSerializerConversionSimple() {
+    public void testSerializerConversionSimple() throws SerializationException {
         Person person = new Person("Hans", 23, Gender.MALE);
         SerializationElement element = Person.SERIALIZER.serialize(context(), person);
 
@@ -215,7 +216,7 @@ public abstract class SerializerContextTests extends ContextBasedTest {
     }
 
     @Test
-    public void testIsNulForField(){
+    public void testIsNulForField() throws SerializationException {
         Person person = new Person("Hans", 20, Gender.MALE);
         SerializationContainer serializationElement = Person.SERIALIZER.serialize(context(), person).getAsContainer();
         SerializableField<Person, Job> jobField = new SerializableField<>("job", Job.SERIALIZER, Person::getJob, Person::setJob);

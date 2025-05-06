@@ -1,5 +1,6 @@
 package de.verdox.vserializer.generic.primitive;
 
+import de.verdox.vserializer.exception.SerializationException;
 import de.verdox.vserializer.generic.SerializationContext;
 import de.verdox.vserializer.generic.SerializationElement;
 import de.verdox.vserializer.generic.Serializer;
@@ -30,14 +31,14 @@ public interface PrimitiveArraySerializers {
         }
 
         @Override
-        public SerializationElement serialize(SerializationContext ctx, PRIMITIVE primitiveArray) {
+        public SerializationElement serialize(SerializationContext ctx, PRIMITIVE primitiveArray) throws SerializationException {
             if (primitiveArray == null) return ctx.createNull();
             WRAPPER[] boxed = wrapFunction.apply(primitiveArray);
             return wrapperSerializer.serialize(ctx, boxed);
         }
 
         @Override
-        public PRIMITIVE deserialize(SerializationElement element) {
+        public PRIMITIVE deserialize(SerializationElement element) throws SerializationException {
             if (element == null || element.isNull()) return unwrapFunction.apply(null);
             WRAPPER[] boxed = wrapperSerializer.deserialize(element);
             return unwrapFunction.apply(boxed);

@@ -1,5 +1,6 @@
 package de.verdox.vserializer;
 
+import de.verdox.vserializer.exception.SerializationException;
 import de.verdox.vserializer.generic.SerializationContainer;
 import de.verdox.vserializer.generic.Serializer;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +28,7 @@ public abstract class AbstractSerializableField<T, R> {
         this(null, serializer, getter);
     }
 
-    public T readAndSet(@Nullable T parent, SerializationContainer container) {
+    public T readAndSet(@Nullable T parent, SerializationContainer container) throws SerializationException {
         if (parent == null) {
             return null;
         }
@@ -41,7 +42,7 @@ public abstract class AbstractSerializableField<T, R> {
      * @param serializationContainer the container
      * @param wrapped                the wrapped element
      */
-    public abstract void write(SerializationContainer serializationContainer, T wrapped);
+    public abstract void write(SerializationContainer serializationContainer, T wrapped) throws SerializationException;
 
     /**
      * Reads a wrapped object from a serialization container
@@ -49,7 +50,7 @@ public abstract class AbstractSerializableField<T, R> {
      * @param serializationContainer the container
      * @return the wrapped element
      */
-    public abstract R read(SerializationContainer serializationContainer);
+    public abstract R read(SerializationContainer serializationContainer) throws SerializationException;
 
     /**
      * Updates the value on the object.

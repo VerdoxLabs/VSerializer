@@ -1,5 +1,6 @@
 package de.verdox.vserializer;
 
+import de.verdox.vserializer.exception.SerializationException;
 import de.verdox.vserializer.generic.SerializationContainer;
 import de.verdox.vserializer.generic.SerializationElement;
 import de.verdox.vserializer.generic.Serializer;
@@ -108,8 +109,7 @@ public class SerializableField<T, R> extends AbstractSerializableField<T, R> {
     }
 
     @Override
-    public void write(SerializationContainer serializationContainer, T wrapped) {
-        try {
+    public void write(SerializationContainer serializationContainer, T wrapped) throws SerializationException {
             R fieldValue = getter.apply(wrapped);
 
             SerializationElement serialized;
@@ -119,22 +119,15 @@ public class SerializableField<T, R> extends AbstractSerializableField<T, R> {
                 serialized = serializer.serialize(serializationContainer.getContext(), fieldValue);
 
             serializationContainer.set(fieldName == null ? serializer.id() : fieldName, serialized);
-        } catch (Throwable e) {
-            throw new RuntimeException("An error occurred in the SerializableField " + fieldName + " while writing with the serializer " + serializer.id() + " of type " + serializer.getType(), e);
-        }
     }
 
     @Override
-    public R read(SerializationContainer serializationContainer) {
-        try {
+    public R read(SerializationContainer serializationContainer) throws SerializationException {
             SerializationElement serialized = serializationContainer.get(fieldName == null ? serializer.id() : fieldName);
             if (Serializer.Null.isNull(serialized)) {
                 return serializer.defaultValue();
             }
             return serializer.deserialize(serialized);
-        } catch (Throwable e) {
-            throw new RuntimeException("An error occurred in the SerializableField " + fieldName + " while reading with the serializer " + serializer.id() + " of type " + serializer.getType(), e);
-        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package util;
 
+import de.verdox.vserializer.exception.SerializationException;
 import de.verdox.vserializer.generic.SerializationContext;
 import de.verdox.vserializer.generic.SerializationElement;
 import de.verdox.vserializer.generic.Serializer;
@@ -23,7 +24,7 @@ public class TestUtil {
      * @param <K>                  The key generic type
      * @param <V>                  The value generic type
      */
-    public static <K, V> void testMapSerialization(SerializationContext serializationContext, Serializer<K> keySerializer, Serializer<V> valueSerializer, Map<K, V> map, Supplier<Map<K, V>> mapSupplier) {
+    public static <K, V> void testMapSerialization(SerializationContext serializationContext, Serializer<K> keySerializer, Serializer<V> valueSerializer, Map<K, V> map, Supplier<Map<K, V>> mapSupplier) throws SerializationException {
         Serializer<Map<K, V>> mapSerializer = Serializer.Map.create(keySerializer, valueSerializer, mapSupplier);
         SerializationElement serializationElement = mapSerializer.serialize(serializationContext, map);
         Assertions.assertEquals(map, mapSerializer.deserialize(serializationElement));
@@ -38,7 +39,7 @@ public class TestUtil {
      * @param collectionSupplier   A supplier for new collection instances
      * @param <T>                  The generic element type
      */
-    public static <T> void testCollectionSerialization(SerializationContext serializationContext, Serializer<T> elementSerializer, Collection<T> collection, Supplier<Collection<T>> collectionSupplier) {
+    public static <T> void testCollectionSerialization(SerializationContext serializationContext, Serializer<T> elementSerializer, Collection<T> collection, Supplier<Collection<T>> collectionSupplier) throws SerializationException  {
         Serializer<Collection<T>> collectionSerializer = Serializer.Collection.create(elementSerializer, collectionSupplier);
         SerializationElement serializationElement = collectionSerializer.serialize(serializationContext, collection);
         Assertions.assertEquals(collection, collectionSerializer.deserialize(serializationElement));
@@ -53,17 +54,17 @@ public class TestUtil {
      * @param arrayCreator         A function to create a new array
      * @param <T>                  The generic element type
      */
-    public static <T> void testArraySerialization(SerializationContext serializationContext, Serializer<T> elementSerializer, T[] array, IntFunction<? extends T[]> arrayCreator) {
+    public static <T> void testArraySerialization(SerializationContext serializationContext, Serializer<T> elementSerializer, T[] array, IntFunction<? extends T[]> arrayCreator) throws SerializationException  {
         Serializer<T[]> arraySerializer = Serializer.Array.create(elementSerializer, arrayCreator);
         SerializationElement serializationElement = arraySerializer.serialize(serializationContext, array);
         Assertions.assertArrayEquals(array, arraySerializer.deserialize(serializationElement));
     }
 
-    public static <T> void testPrimitiveSerialization(SerializationContext serializationContext, Serializer.Primitive<T> primitiveSerializer, T primitive){
+    public static <T> void testPrimitiveSerialization(SerializationContext serializationContext, Serializer.Primitive<T> primitiveSerializer, T primitive) throws SerializationException {
         testSerialization(serializationContext, primitiveSerializer, primitive);
     }
 
-    public static <T> void testSerialization(SerializationContext serializationContext, Serializer<T> serializer, T element) {
+    public static <T> void testSerialization(SerializationContext serializationContext, Serializer<T> serializer, T element) throws SerializationException  {
         SerializationElement serializationElement = serializer.serialize(serializationContext, element);
         Assertions.assertEquals(element, serializer.deserialize(serializationElement));
     }

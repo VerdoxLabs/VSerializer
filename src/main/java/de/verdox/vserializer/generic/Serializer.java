@@ -3,6 +3,7 @@ package de.verdox.vserializer.generic;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 import de.verdox.vserializer.SerializableField;
+import de.verdox.vserializer.exception.SerializationException;
 import de.verdox.vserializer.generic.primitive.PrimitiveArraySerializers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,17 +25,19 @@ public interface Serializer<T> {
      * Serializes the given object to a {@link SerializationElement}
      *
      * @param object the object to serialize
+     * @throws SerializationException if any error happens during the process
      * @return the serialized element
      */
-    SerializationElement serialize(SerializationContext serializationContext, T object);
+    SerializationElement serialize(SerializationContext serializationContext, T object) throws SerializationException;
 
     /**
      * Deserializes the given {@link SerializationElement} to an object
      *
      * @param serializedElement the serialized element
+     * @throws SerializationException if any error happens during the process
      * @return the object
      */
-    T deserialize(SerializationElement serializedElement);
+    T deserialize(SerializationElement serializedElement) throws SerializationException;
 
     /**
      * Updates a given object from a serialized element.
@@ -43,10 +46,10 @@ public interface Serializer<T> {
      *
      * @param existingObject    the existing object that is updated
      * @param serializedElement the update element
-     * @throws UnsupportedOperationException if the serializer does not support updating a live object
+     * @throws SerializationException if the serializer does not support updating a live object
      */
-    default void updateLiveObjectFromJson(@Nullable T existingObject, SerializationElement serializedElement) {
-        throw new UnsupportedOperationException("The Serializer " + getClass().getName() + " does not support updating a live object. If you have implemented your own Serializer and want to enable this functionality make sure to proper implement the updateLiveObjectFromJson function from the Serializer interface.");
+    default void updateLiveObjectFromJson(@Nullable T existingObject, SerializationElement serializedElement) throws SerializationException {
+        throw new SerializationException("The Serializer " + getClass().getName() + " does not support updating a live object. If you have implemented your own Serializer and want to enable this functionality make sure to proper implement the updateLiveObjectFromJson function from the Serializer interface.");
     }
 
     /**
@@ -123,7 +126,7 @@ public interface Serializer<T> {
         }
 
         @Override
-        public SerializationElement serialize(SerializationContext serializationContext, java.util.Optional<T> object) {
+        public SerializationElement serialize(SerializationContext serializationContext, java.util.Optional<T> object) throws SerializationException {
             if (object.isPresent()) {
                 return elementSerializer.serialize(serializationContext, object.get());
             }
@@ -131,7 +134,7 @@ public interface Serializer<T> {
         }
 
         @Override
-        public java.util.Optional<T> deserialize(SerializationElement serializedElement) {
+        public java.util.Optional<T> deserialize(SerializationElement serializedElement) throws SerializationException {
             if (serializedElement.isNull()) {
                 return java.util.Optional.empty();
             }
@@ -210,7 +213,7 @@ public interface Serializer<T> {
         public static final Serializer<float[]> FLOAT_ARRAY = new PrimitiveArraySerializers.FloatArray();
         public static final Serializer<double[]> DOUBLE_ARRAY = new PrimitiveArraySerializers.DoubleArray();
         public static final Serializer<char[]> CHAR_ARRAY = new PrimitiveArraySerializers.CharArray();
-        
+
         private final BiFunction<SerializationContext, T, SerializationPrimitive> to;
         private final Function<SerializationElement, T> from;
         private final Class<? extends T> type;
@@ -267,7 +270,7 @@ public interface Serializer<T> {
         }
 
         @Override
-        public SerializationElement serialize(SerializationContext serializationContext, E[] objects) {
+        public SerializationElement serialize(SerializationContext serializationContext, E[] objects) throws SerializationException {
             SerializationArray array = serializationContext.createArray();
             for (E e : objects)
                 array.add(elementSerializer.serialize(serializationContext, e));
@@ -275,7 +278,7 @@ public interface Serializer<T> {
         }
 
         @Override
-        public E[] deserialize(SerializationElement serializedElement) {
+        public E[] deserialize(SerializationElement serializedElement) throws SerializationException {
             SerializationArray jsonArray = serializedElement.getAsArray();
             List<E> list = new ArrayList<>();
             for (SerializationElement element : jsonArray)
@@ -284,7 +287,7 @@ public interface Serializer<T> {
         }
 
         @Override
-        public void updateLiveObjectFromJson(E @Nullable [] existingObject, SerializationElement serializedElement) {
+        public void updateLiveObjectFromJson(E @Nullable [] existingObject, SerializationElement serializedElement) throws SerializationException {
             E[] deserializedArray = deserialize(serializedElement);
             if (existingObject == null)
                 return;
@@ -369,7 +372,7 @@ public interface Serializer<T> {
         }
 
         @Override
-        public SerializationElement serialize(SerializationContext serializationContext, C objects) {
+        public SerializationElement serialize(SerializationContext serializationContext, C objects) throws SerializationException {
             SerializationArray array = serializationContext.createArray();
             for (T object : objects)
                 array.add(elementSerializer.serialize(serializationContext, object));
@@ -377,7 +380,7 @@ public interface Serializer<T> {
         }
 
         @Override
-        public C deserialize(SerializationElement serializedElement) {
+        public C deserialize(SerializationElement serializedElement) throws SerializationException {
             SerializationArray jsonArray = serializedElement.getAsArray();
             C list = supplyCollection();
             for (SerializationElement element : jsonArray)
@@ -386,7 +389,7 @@ public interface Serializer<T> {
         }
 
         @Override
-        public void updateLiveObjectFromJson(@Nullable C existingObject, SerializationElement serializedElement) {
+        public void updateLiveObjectFromJson(@Nullable C existingObject, SerializationElement serializedElement) throws SerializationException {
             if (existingObject == null)
                 return;
             C deserialized = deserialize(serializedElement);
@@ -424,36 +427,36 @@ public interface Serializer<T> {
         }
 
         @Override
-        public SerializationElement serialize(SerializationContext serializationContext, M object) {
+        public SerializationElement serialize(SerializationContext serializationContext, M object) throws SerializationException {
             boolean isStringKeys = object.keySet().stream().anyMatch(k -> k instanceof String);
             if (isStringKeys) {
                 SerializationContainer container = serializationContext.createContainer();
 
-                object.forEach((k, v) -> {
-                    SerializationElement keyElement = key.serialize(serializationContext, k);
-                    SerializationElement valueElement = value.serialize(serializationContext, v);
+                for (java.util.Map.Entry<K, V> kvEntry : object.entrySet()) {
+                    SerializationElement keyElement = key.serialize(serializationContext, kvEntry.getKey());
+                    SerializationElement valueElement = value.serialize(serializationContext, kvEntry.getValue());
                     container.set(keyElement.getAsString(), valueElement);
-                });
+                }
                 return container;
             } else {
                 SerializationArray array = serializationContext.createArray();
 
-                object.forEach((k, v) -> {
-                    SerializationElement keyElement = key.serialize(serializationContext, k);
-                    SerializationElement valueElement = value.serialize(serializationContext, v);
+                for (java.util.Map.Entry<K, V> kvEntry : object.entrySet()) {
+                    SerializationElement keyElement = key.serialize(serializationContext, kvEntry.getKey());
+                    SerializationElement valueElement = value.serialize(serializationContext, kvEntry.getValue());
 
                     SerializationContainer element = serializationContext.createContainer();
                     element.set("key", keyElement);
                     element.set("value", valueElement);
 
                     array.add(element);
-                });
+                }
                 return array;
             }
         }
 
         @Override
-        public M deserialize(SerializationElement serializedElement) {
+        public M deserialize(SerializationElement serializedElement) throws SerializationException {
             M map = supplyMap();
             if (serializedElement.isArray()) {
                 SerializationArray array = serializedElement.getAsArray();
@@ -477,7 +480,7 @@ public interface Serializer<T> {
         }
 
         @Override
-        public void updateLiveObjectFromJson(@Nullable M existingObject, SerializationElement serializedElement) {
+        public void updateLiveObjectFromJson(@Nullable M existingObject, SerializationElement serializedElement) throws SerializationException {
             if (existingObject == null)
                 return;
             M deserialized = deserialize(serializedElement);
@@ -545,7 +548,7 @@ public interface Serializer<T> {
         }
 
         @Override
-        public SerializationElement serialize(SerializationContext serializationContext, T object) {
+        public SerializationElement serialize(SerializationContext serializationContext, T object) throws SerializationException {
             SerializationContainer container = serializationContext.createContainer();
 
             String type = variants.entrySet().stream().filter(stringVariantEntry -> stringVariantEntry.getValue().getType().equals(object.getClass()))
@@ -557,16 +560,16 @@ public interface Serializer<T> {
         }
 
         @Override
-        public T deserialize(SerializationElement serializedElement) {
+        public T deserialize(SerializationElement serializedElement) throws SerializationException {
             SerializationContainer container = serializedElement.getAsContainer();
             if (!container.contains("type"))
                 return null;
 
             String type = container.get("type").getAsString();
             if (!variants.containsKey(type))
-                throw new IllegalArgumentException("The type " + type + " is not known in this Selection Serializer");
+                throw new SerializationException("The type " + type + " is not known in this Selection Serializer");
             if (!container.contains(type))
-                throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element " + container);
+                throw new SerializationException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element " + container);
             return variants.get(type).deserialize(container.get(type));
         }
     }
@@ -614,10 +617,15 @@ public interface Serializer<T> {
         }
 
         @Override
-        public SerializationElement serialize(SerializationContext serializationContext, T object) {
+        public SerializationElement serialize(SerializationContext serializationContext, T object) throws SerializationException {
             SerializationContainer container = serializationContext.createContainer();
 
-            variants.forEach((s, variant) -> container.set(s, variant.serializer().serialize(serializationContext, variant.variant())));
+            for (java.util.Map.Entry<String, Variant<T>> stringVariantEntry : variants.entrySet()) {
+
+                var s = stringVariantEntry.getKey();
+                var variant = stringVariantEntry.getValue();
+                container.set(s, variant.serializer().serialize(serializationContext, variant.variant()));
+            }
 
             String type;
             if (object == null) {
@@ -640,18 +648,18 @@ public interface Serializer<T> {
         }
 
         @Override
-        public T deserialize(SerializationElement serializedElement) {
+        public T deserialize(SerializationElement serializedElement) throws SerializationException {
             SerializationContainer container = serializedElement.getAsContainer();
             if (!container.contains("type"))
                 return null;
 
             String type = container.get("type").getAsString();
             if (!variants.containsKey(type))
-                throw new IllegalArgumentException("The type " + type + " is not known in this Selection Serializer");
+                throw new SerializationException("The type " + type + " is not known in this Selection Serializer");
 
             Variant<?> variant = variants.get(type);
             if (!container.contains(type) && variant.variant != null)
-                throw new IllegalArgumentException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element " + container);
+                throw new SerializationException("The type " + type + " is known to this Selection Serializer. However the type is not specified in the serialized element " + container);
             return variants.get(type).serializer().deserialize(container.get(type));
         }
 

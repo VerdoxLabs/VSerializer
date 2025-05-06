@@ -2,6 +2,7 @@ package de.verdox.vserializer.generic;
 
 import com.google.common.reflect.TypeToken;
 import de.verdox.vserializer.*;
+import de.verdox.vserializer.exception.SerializationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -102,55 +103,46 @@ public class SerializerBuilder<T> {
 
         return new Serializer<>() {
             @Override
-            public SerializationElement serialize(SerializationContext serializationContext, T object) {
+            public SerializationElement serialize(SerializationContext serializationContext, T object) throws SerializationException {
                 if (constructorSerializer == null && fields.isEmpty()) {
                     throw new IllegalStateException("Neither a constructor nor fields were defined for this serializer");
                 }
 
                 SerializationContainer container = constructorSerializer != null ? constructorSerializer.serialize(serializationContext, object).getAsContainer() : serializationContext.createContainer();
-                fields.forEach((s, serializableField) -> {
-                    try {
-                        serializableField.write(container, object);
-                    } catch (Throwable e) {
-                        throw new RuntimeException("There was an error in the serializer with the id " + id() + " while serializing the field " + s, e);
-                    }
-                });
+                for (AbstractSerializableField<T, ?> serializableField : fields.values()) {
+                    serializableField.write(container, object);
+                }
                 return container;
             }
 
             @Override
-            public T deserialize(SerializationElement serializedElement) {
+            public T deserialize(SerializationElement serializedElement) throws SerializationException {
                 if (serializedElement == null) {
                     return null;
                 }
                 SerializationContainer container = serializedElement.getAsContainer();
                 Objects.requireNonNull(constructorSerializer, "Cannot deserialize an object when no constructor was defined");
                 Objects.requireNonNull(constructorSerializer.deserializer, "The constructor serializer has no deserialization function");
-                T wrapped = constructorSerializer.deserializer.apply(this, serializedElement);
+                T wrapped = constructorSerializer.deserializer.deserialize(this, serializedElement);
 
                 for (java.util.Map.Entry<String, AbstractSerializableField<T, ?>> stringSerializableFieldEntry : fields.entrySet()) {
-                    String fieldId = stringSerializableFieldEntry.getKey();
                     AbstractSerializableField<T, ?> serializableField = stringSerializableFieldEntry.getValue();
-                    try {
-                        wrapped = serializableField.readAndSet(wrapped, container);
-                    } catch (Throwable e) {
-                        throw new RuntimeException("There was an error in the serializer with the id " + id() + " while deserializing the field " + fieldId, e);
-                    }
+                    wrapped = serializableField.readAndSet(wrapped, container);
                 }
                 return wrapped;
             }
 
             @Override
-            public void updateLiveObjectFromJson(@Nullable T existingObject, SerializationElement serializedElement) {
+            public void updateLiveObjectFromJson(@Nullable T existingObject, SerializationElement serializedElement) throws SerializationException {
                 SerializationContainer container = serializedElement.getAsContainer();
-                if(constructorSerializer != null) {
+                if (constructorSerializer != null) {
                     for (SerializableField<T, ?> field : constructorSerializer.getFields()) {
                         field.readAndSet(existingObject, container);
                     }
                 }
-                fields.forEach((s, serializableField) -> {
+                for (AbstractSerializableField<T, ?> serializableField : fields.values()) {
                     serializableField.readAndSet(existingObject, container);
-                });
+                }
             }
 
             @Override
@@ -605,11 +597,11 @@ public class SerializerBuilder<T> {
     public static class ConstructorSerializer<T> implements Serializer<T> {
         private final Class<T> type;
         private final String id;
-        private final BiFunction<Serializer<T>, SerializationElement, T> deserializer;
+        private final ProvidedDeserializer<T> deserializer;
         private final SerializableField<T, ?>[] fields;
 
         @SafeVarargs
-        private ConstructorSerializer(Class<T> type, String id, BiFunction<Serializer<T>, SerializationElement, T> deserializer, SerializableFieldBuilder<T, ?>... fields) {
+        private ConstructorSerializer(Class<T> type, String id, ProvidedDeserializer<T> deserializer, SerializableFieldBuilder<T, ?>... fields) {
             this.type = type;
             this.id = id;
             this.deserializer = deserializer;
@@ -621,25 +613,17 @@ public class SerializerBuilder<T> {
         }
 
         @Override
-        public SerializationElement serialize(SerializationContext serializationContext, T object) {
-            try {
-                SerializationContainer container = serializationContext.createContainer();
-                for (SerializableField<T, ?> field : this.fields) {
-                    field.write(container, object);
-                }
-                return container;
-            } catch (Throwable e) {
-                throw new RuntimeException("There was an error serializing " + id, e);
+        public SerializationElement serialize(SerializationContext serializationContext, T object) throws SerializationException {
+            SerializationContainer container = serializationContext.createContainer();
+            for (SerializableField<T, ?> field : this.fields) {
+                field.write(container, object);
             }
+            return container;
         }
 
         @Override
-        public T deserialize(SerializationElement serializedElement) {
-            try {
-                return deserializer.apply(this, serializedElement);
-            } catch (Throwable e) {
-                throw new RuntimeException("There was an error deserializing " + id, e);
-            }
+        public T deserialize(SerializationElement serializedElement) throws SerializationException {
+            return deserializer.deserialize(this, serializedElement);
         }
 
         @Override
@@ -651,6 +635,11 @@ public class SerializerBuilder<T> {
         public Class<? extends T> getType() {
             return type;
         }
+    }
+
+    @FunctionalInterface
+    public interface ProvidedDeserializer<T> {
+        T deserialize(Serializer<T> serializer, SerializationElement element) throws SerializationException;
     }
 
 }

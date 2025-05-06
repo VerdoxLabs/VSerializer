@@ -1,5 +1,6 @@
 package test;
 
+import de.verdox.vserializer.exception.SerializationException;
 import de.verdox.vserializer.generic.*;
 import model.*;
 import org.junit.jupiter.api.Assertions;
@@ -20,40 +21,40 @@ public abstract class SerializerTests extends ContextBasedTest {
     @ParameterizedTest
     @MethodSource("testInputsProvider")
     @DisplayName("Run Primitive Serialization Test")
-    void testPrimitiveSerialization(TestInputs.TestInput<?> input) {
+    void testPrimitiveSerialization(TestInputs.TestInput<?> input) throws SerializationException {
         input.runPrimitiveTest(context());
     }
 
     @ParameterizedTest
     @MethodSource("testInputsProvider")
     @DisplayName("Run Serializer Test")
-    void testSerializerSerialization(TestInputs.TestInput<?> input) {
+    void testSerializerSerialization(TestInputs.TestInput<?> input) throws SerializationException  {
         input.runSerializerTest(context());
     }
 
     @ParameterizedTest
     @MethodSource("testInputsProvider")
     @DisplayName("Run Array Serialization Test")
-    void testArraySerialization(TestInputs.TestInput<?> input) {
+    void testArraySerialization(TestInputs.TestInput<?> input) throws SerializationException  {
         input.runArrayTest(context());
     }
 
     @ParameterizedTest
     @MethodSource("testInputsProvider")
     @DisplayName("Run Collection Serialization Test")
-    void testCollectionSerialization(TestInputs.TestInput<?> input) {
+    void testCollectionSerialization(TestInputs.TestInput<?> input) throws SerializationException  {
         input.runCollectionTest(context());
     }
 
     @ParameterizedTest
     @MethodSource("testInputsProvider")
     @DisplayName("Run Map Serialization Test")
-    void testMapSerialization(TestInputs.TestInput<?> input) {
+    void testMapSerialization(TestInputs.TestInput<?> input) throws SerializationException  {
         input.runMapTest(context());
     }
 
     @Test
-    public void testComplexToPrimitiveSerializer(){
+    public void testComplexToPrimitiveSerializer() throws SerializationException {
 
         Serializer<Person> PERSON_BY_NAME_SERIALIZER = SerializerBuilder.createObjectToPrimitiveSerializer("person_by_name", Person.class, Serializer.Primitive.STRING, Person::getName, s -> new Person(s, 0, Gender.MALE));
 
@@ -68,7 +69,7 @@ public abstract class SerializerTests extends ContextBasedTest {
     }
 
     @Test
-    void testSelectionSerializerWithEmpty(){
+    void testSelectionSerializerWithEmpty() throws SerializationException {
         Car car = new Car();
         SerializationElement serializedCar = GroundVehicle.VEHICLE_SELECTION_SERIALIZER.serialize(context(), car);
 
