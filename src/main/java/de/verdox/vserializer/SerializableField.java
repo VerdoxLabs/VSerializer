@@ -120,8 +120,8 @@ public class SerializableField<T, R> extends AbstractSerializableField<T, R> {
                 serialized = serializer.serialize(serializationContainer.getContext(), fieldValue);
 
             serializationContainer.set(fieldName == null ? serializer.id() : fieldName, serialized);
-        } catch (SerializationException e) {
-            throw new SerializationException("A serialization exception was thrown while serializing the field " + fieldName, e);
+        } catch (Throwable e) {
+            throw new SerializationException("A serialization exception was thrown while serializing the field " + fieldName + ". " + serializationContainer, e);
         }
     }
 
@@ -133,8 +133,8 @@ public class SerializableField<T, R> extends AbstractSerializableField<T, R> {
                 return serializer.defaultValue();
             }
             return serializer.deserialize(serialized);
-        } catch (SerializationException e) {
-            throw new SerializationException("A serialization exception was thrown while deserializing the field " + fieldName, e);
+        } catch (Throwable e) {
+            throw new SerializationException("A serialization exception was thrown while deserializing the field " + fieldName + ". " + serializationContainer, e);
         }
     }
 
