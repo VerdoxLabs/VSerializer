@@ -95,9 +95,7 @@ public class JsonSerializationElement implements SerializationElement {
 
     @Override
     public String toString() {
-        return "JsonSerializationElement{" +
-                "jsonElement=" + jsonElement +
-                '}';
+        return jsonElement.toString();
     }
 
     @Override
