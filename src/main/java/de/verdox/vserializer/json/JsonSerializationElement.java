@@ -1,6 +1,10 @@
 package de.verdox.vserializer.json;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import de.verdox.vserializer.generic.SerializationArray;
 import de.verdox.vserializer.generic.SerializationContainer;
 import de.verdox.vserializer.generic.SerializationContext;
@@ -95,7 +99,7 @@ public class JsonSerializationElement implements SerializationElement {
 
     @Override
     public String toString() {
-        return jsonElement.toString();
+        return new GsonBuilder().setPrettyPrinting().create().toJson(jsonElement);
     }
 
     @Override
