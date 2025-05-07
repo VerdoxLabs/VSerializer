@@ -82,7 +82,7 @@ public class SerializableField<T, R> extends AbstractSerializableField<T, R> {
     @Deprecated
     public SerializableField(@Nullable String fieldName, Serializer<R> serializer, Function<T, R> getter, @Nullable BiConsumer<T, R> setter) {
         super(fieldName, serializer, getter);
-        if(setter != null) {
+        if (setter != null) {
             this.setter = (t, r) -> {
                 setter.accept(t, r);
                 return t;
@@ -110,6 +110,7 @@ public class SerializableField<T, R> extends AbstractSerializableField<T, R> {
 
     @Override
     public void write(SerializationContainer serializationContainer, T wrapped) throws SerializationException {
+        try {
             R fieldValue = getter.apply(wrapped);
 
             SerializationElement serialized;
@@ -119,15 +120,22 @@ public class SerializableField<T, R> extends AbstractSerializableField<T, R> {
                 serialized = serializer.serialize(serializationContainer.getContext(), fieldValue);
 
             serializationContainer.set(fieldName == null ? serializer.id() : fieldName, serialized);
+        } catch (SerializationException e) {
+            throw new SerializationException("A serialization exception was thrown while serializing the field " + fieldName, e);
+        }
     }
 
     @Override
     public R read(SerializationContainer serializationContainer) throws SerializationException {
+        try {
             SerializationElement serialized = serializationContainer.get(fieldName == null ? serializer.id() : fieldName);
             if (Serializer.Null.isNull(serialized)) {
                 return serializer.defaultValue();
             }
             return serializer.deserialize(serialized);
+        } catch (SerializationException e) {
+            throw new SerializationException("A serialization exception was thrown while deserializing the field " + fieldName, e);
+        }
     }
 
     @Override
