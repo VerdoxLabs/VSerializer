@@ -80,6 +80,28 @@ public interface Serializer<T> {
         return null;
     }
 
+    Serializer<SerializationElement> IDENTITY = new Serializer<>() {
+        @Override
+        public SerializationElement serialize(SerializationContext serializationContext, SerializationElement object) throws SerializationException {
+            return serializationContext.convert(object, false);
+        }
+
+        @Override
+        public SerializationElement deserialize(SerializationElement serializedElement) throws SerializationException {
+            return serializedElement;
+        }
+
+        @Override
+        public String id() {
+            return "identity";
+        }
+
+        @Override
+        public Class<? extends SerializationElement> getType() {
+            return SerializationElement.class;
+        }
+    };
+
     class UUID implements Serializer<java.util.UUID> {
         public static final UUID INSTANCE = new UUID();
 
