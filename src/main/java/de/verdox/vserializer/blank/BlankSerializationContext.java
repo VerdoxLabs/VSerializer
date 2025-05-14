@@ -71,7 +71,7 @@ public class BlankSerializationContext implements SerializationContext {
 
     @Override
     public SerializationContainer createContainer() {
-        return new BlankSerializationContainer(this);
+        return new BlankSerializationContainer(this, hasCaseSensitiveKeys());
     }
 
     @Override
@@ -92,5 +92,9 @@ public class BlankSerializationContext implements SerializationContext {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof BlankSerializationContext && obj.getClass().equals(this.getClass());
+    }
+
+    public boolean hasCaseSensitiveKeys() {
+        return false;
     }
 }

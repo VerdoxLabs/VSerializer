@@ -16,14 +16,20 @@ import java.util.Objects;
  */
 public class BlankSerializationContainer extends BlankSerializationElement implements SerializationContainer {
     private final LinkedHashMap<String, SerializationElement> map = new LinkedHashMap<>();
+    private final boolean caseSensitive;
 
     /**
      * Standard constructor accepting the serialization context for this container
      *
      * @param serializationContext the context
      */
-    public BlankSerializationContainer(SerializationContext serializationContext) {
+    public BlankSerializationContainer(SerializationContext serializationContext, boolean caseSensitive) {
         super(serializationContext);
+        this.caseSensitive = caseSensitive;
+    }
+
+    public BlankSerializationContainer(SerializationContext serializationContext) {
+        this(serializationContext, false);
     }
 
     @Override
@@ -62,5 +68,9 @@ public class BlankSerializationContainer extends BlankSerializationElement imple
     @Override
     public int hashCode() {
         return Objects.hash(map);
+    }
+
+    private String wrapKey(String key) {
+        return caseSensitive ? key : key.toLowerCase(Locale.ROOT);
     }
 }
