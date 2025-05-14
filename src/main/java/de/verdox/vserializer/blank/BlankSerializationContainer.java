@@ -39,22 +39,22 @@ public class BlankSerializationContainer extends BlankSerializationElement imple
 
     @Override
     public @NotNull SerializationElement get(String key) {
-        return map.getOrDefault(key.toLowerCase(Locale.ROOT), getContext().createNull());
+        return map.getOrDefault(wrapKey(key), getContext().createNull());
     }
 
     @Override
     public boolean contains(String key) {
-        return map.containsKey(key.toLowerCase(Locale.ROOT));
+        return map.containsKey(wrapKey(key));
     }
 
     @Override
     public void set(String key, SerializationElement serializationElement) {
-        map.put(key.toLowerCase(Locale.ROOT), getContext().convert(serializationElement, false));
+        map.put(wrapKey(key), getContext().convert(serializationElement, false));
     }
 
     @Override
     public void remove(String key) {
-        map.remove(key.toLowerCase(Locale.ROOT));
+        map.remove(wrapKey(key));
     }
 
     @Override
