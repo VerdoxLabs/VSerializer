@@ -5,10 +5,7 @@ import de.verdox.vserializer.generic.SerializationContext;
 import de.verdox.vserializer.generic.SerializationElement;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * A blank implementation of a serialization array.
@@ -253,6 +250,18 @@ public class BlankSerializationArray extends BlankSerializationElement implement
     @Override
     public String toString() {
         return "{" + elements + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        BlankSerializationArray that = (BlankSerializationArray) o;
+        return Objects.equals(elements, that.elements);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(elements);
     }
 }
 
