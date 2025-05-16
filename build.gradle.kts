@@ -48,6 +48,12 @@ tasks.test {
     useJUnitPlatform()
 }
 
+val testSourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("test-sources")
+    from(sourceSets["test"].output)
+    dependsOn(tasks.testClasses)
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
@@ -56,6 +62,11 @@ publishing {
                 artifactId = "vserializer"
                 version = "1.2.3-SNAPSHOT"
                 from(components["java"])
+
+                artifact(testSourcesJar.get()) {
+                    classifier = "test-sources"
+                }
+
                 url = "https://github.com/VerdoxLabs/VSerializer"
                 licenses {
                     license {
