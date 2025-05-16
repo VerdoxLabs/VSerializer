@@ -73,4 +73,9 @@ public class BlankSerializationContainer extends BlankSerializationElement imple
     private String wrapKey(String key) {
         return caseSensitive ? key : key.toLowerCase(Locale.ROOT);
     }
+
+    @Override
+    public String toString() {
+        return "{" + map + "}";
+    }
 }

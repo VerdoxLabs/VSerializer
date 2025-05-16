@@ -249,5 +249,10 @@ public class BlankSerializationArray extends BlankSerializationElement implement
 
         isConflicting = trueCount >= 2;
     }
+
+    @Override
+    public String toString() {
+        return "{" + elements + "}";
+    }
 }
 

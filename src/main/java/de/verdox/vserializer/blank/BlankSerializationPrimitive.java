@@ -294,4 +294,9 @@ public class BlankSerializationPrimitive extends BlankSerializationElement imple
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return value.toString();
+    }
 }

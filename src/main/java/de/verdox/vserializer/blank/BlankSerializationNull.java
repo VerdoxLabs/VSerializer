@@ -21,4 +21,9 @@ public class BlankSerializationNull extends BlankSerializationElement implements
     public boolean equals(Object obj) {
         return obj instanceof BlankSerializationNull;
     }
+
+    @Override
+    public String toString() {
+        return "null";
+    }
 }
