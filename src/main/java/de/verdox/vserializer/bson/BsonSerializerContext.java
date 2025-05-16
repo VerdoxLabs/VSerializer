@@ -8,14 +8,15 @@ import de.verdox.vserializer.json.JsonSerializerContext;
 
 public class BsonSerializerContext extends JsonSerializerContext {
     @Override
-    public JsonSerializationContainer createContainer() {
-        return new BsonSerializationContainer(this, new JsonObject());
+    public JsonSerializationContainer createContainer(JsonObject jsonObject) {
+        return new BsonSerializationContainer(this, jsonObject);
     }
 
     @Override
     public JsonSerializationElement toElement(JsonElement jsonElement) {
-        if (jsonElement.isJsonObject())
-            return new BsonSerializationContainer(this, jsonElement.getAsJsonObject());
-        return super.toElement(jsonElement);
+        if(jsonElement == null || !jsonElement.isJsonObject()) {
+            return super.toElement(jsonElement);
+        }
+        return new BsonSerializationContainer(this, jsonElement.getAsJsonObject());
     }
 }

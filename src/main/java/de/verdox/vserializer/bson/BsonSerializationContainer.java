@@ -3,13 +3,12 @@ package de.verdox.vserializer.bson;
 import com.google.gson.JsonObject;
 import de.verdox.vserializer.generic.SerializationElement;
 import de.verdox.vserializer.json.JsonSerializationContainer;
-import de.verdox.vserializer.json.JsonSerializerContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
 public class BsonSerializationContainer extends JsonSerializationContainer {
-    public BsonSerializationContainer(JsonSerializerContext serializerContext, JsonObject jsonElement) {
+    public BsonSerializationContainer(BsonSerializerContext serializerContext, JsonObject jsonElement) {
         super(serializerContext, jsonElement);
     }
 

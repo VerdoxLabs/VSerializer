@@ -80,12 +80,12 @@ public class JsonSerializationElement implements SerializationElement {
 
     @Override
     public SerializationContainer getAsContainer() {
-        return new JsonSerializationContainer(getContext(), jsonElement.getAsJsonObject());
+        return getContext().createContainer(jsonElement.getAsJsonObject());
     }
 
     @Override
     public SerializationArray getAsArray() {
-        return new JsonSerializationArray(getContext(), jsonElement.getAsJsonArray());
+        return getContext().createArray(jsonElement.getAsJsonArray());
     }
 
     @Override

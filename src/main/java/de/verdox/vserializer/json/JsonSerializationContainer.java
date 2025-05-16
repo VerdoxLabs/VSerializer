@@ -2,6 +2,7 @@ package de.verdox.vserializer.json;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import de.verdox.vserializer.bson.BsonSerializationContainer;
 import de.verdox.vserializer.generic.SerializationContainer;
 import de.verdox.vserializer.generic.SerializationElement;
 import org.jetbrains.annotations.NotNull;
