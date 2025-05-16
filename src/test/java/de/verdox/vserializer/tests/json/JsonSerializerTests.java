@@ -1,8 +1,8 @@
-package json;
+package de.verdox.vserializer.tests.json;
 
 import de.verdox.vserializer.generic.SerializationContext;
 import de.verdox.vserializer.json.JsonSerializerContext;
-import test.SerializerTests;
+import de.verdox.vserializer.tests.test.SerializerTests;
 
 public class JsonSerializerTests extends SerializerTests {
     private static final SerializationContext SERIALIZATION_CONTEXT = new JsonSerializerContext();

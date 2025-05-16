@@ -1,14 +1,15 @@
-package test;
+package de.verdox.vserializer.tests.test;
 
 import de.verdox.vserializer.exception.SerializationException;
 import de.verdox.vserializer.generic.*;
+import de.verdox.vserializer.tests.model.*;
 import model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import util.TestInputs;
+import de.verdox.vserializer.tests.util.TestInputs;
 
 import java.util.stream.Stream;
 
@@ -28,28 +29,28 @@ public abstract class SerializerTests extends ContextBasedTest {
     @ParameterizedTest
     @MethodSource("testInputsProvider")
     @DisplayName("Run Serializer Test")
-    void testSerializerSerialization(TestInputs.TestInput<?> input) throws SerializationException  {
+    void testSerializerSerialization(TestInputs.TestInput<?> input) throws SerializationException {
         input.runSerializerTest(context());
     }
 
     @ParameterizedTest
     @MethodSource("testInputsProvider")
     @DisplayName("Run Array Serialization Test")
-    void testArraySerialization(TestInputs.TestInput<?> input) throws SerializationException  {
+    void testArraySerialization(TestInputs.TestInput<?> input) throws SerializationException {
         input.runArrayTest(context());
     }
 
     @ParameterizedTest
     @MethodSource("testInputsProvider")
     @DisplayName("Run Collection Serialization Test")
-    void testCollectionSerialization(TestInputs.TestInput<?> input) throws SerializationException  {
+    void testCollectionSerialization(TestInputs.TestInput<?> input) throws SerializationException {
         input.runCollectionTest(context());
     }
 
     @ParameterizedTest
     @MethodSource("testInputsProvider")
     @DisplayName("Run Map Serialization Test")
-    void testMapSerialization(TestInputs.TestInput<?> input) throws SerializationException  {
+    void testMapSerialization(TestInputs.TestInput<?> input) throws SerializationException {
         input.runMapTest(context());
     }
 
@@ -172,4 +173,22 @@ public abstract class SerializerTests extends ContextBasedTest {
         container.set("child", primitive);
         Assertions.assertTrue(container.get("child").getAsPrimitive().isDouble());
     }
+
+    @Test
+    void testPrimitiveArraySerialization() throws SerializationException {
+        boolean[] data = new boolean[]{false, true};
+        SerializationElement element = Serializer.Primitive.BOOLEAN_ARRAY.serialize(context(), data);
+        boolean[] result = Serializer.Primitive.BOOLEAN_ARRAY.deserialize(element);
+        Assertions.assertArrayEquals(data, result);
+    }
+
+    @Test
+    void testPrimitiveArraySerializationEmpty() throws SerializationException {
+        boolean[] data = new boolean[0];
+        SerializationElement element = Serializer.Primitive.BOOLEAN_ARRAY.serialize(context(), data);
+        boolean[] result = Serializer.Primitive.BOOLEAN_ARRAY.deserialize(element);
+        Assertions.assertArrayEquals(data, result);
+    }
+
+
 }

@@ -1,4 +1,4 @@
-package model;
+package de.verdox.vserializer.tests.model;
 
 import de.verdox.vserializer.generic.Serializer;
 

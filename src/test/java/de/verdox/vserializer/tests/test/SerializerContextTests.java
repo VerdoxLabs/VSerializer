@@ -1,4 +1,4 @@
-package test;
+package de.verdox.vserializer.tests.test;
 
 import de.verdox.vserializer.SerializableField;
 import de.verdox.vserializer.exception.SerializationException;
@@ -6,9 +6,9 @@ import de.verdox.vserializer.generic.SerializationArray;
 import de.verdox.vserializer.generic.SerializationContainer;
 import de.verdox.vserializer.generic.SerializationElement;
 import de.verdox.vserializer.generic.Serializer;
-import model.Gender;
-import model.Job;
-import model.Person;
+import de.verdox.vserializer.tests.model.Gender;
+import de.verdox.vserializer.tests.model.Job;
+import de.verdox.vserializer.tests.model.Person;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

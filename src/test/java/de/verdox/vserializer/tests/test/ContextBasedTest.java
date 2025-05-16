@@ -1,4 +1,4 @@
-package test;
+package de.verdox.vserializer.tests.test;
 
 import de.verdox.vserializer.generic.SerializationContext;
 

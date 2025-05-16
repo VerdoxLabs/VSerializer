@@ -1,4 +1,4 @@
-package util;
+package de.verdox.vserializer.tests.util;
 
 import de.verdox.vserializer.exception.SerializationException;
 import de.verdox.vserializer.generic.SerializationContext;
